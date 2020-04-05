@@ -1,12 +1,12 @@
 <template>
   <div class="BackTestWrapper">
-    <button class="" @click="backTest()">数据回测</button>
+    <el-button type="primary" @click="backTest()">数据回测</el-button>
     <label>成功率：</label>
     <label id="successrangeid">{{replaySuccessRate}}</label>
     <el-table :data="replayData" style="width: 100%">
         <el-table-column label="日期" width="200">
           <template slot-scope="scope">
-            <span style="margin-left: 10px">{{ scope.row.date }}</span>
+            <span style="margin-left: 10px">{{ new Date(scope.row.date).toLocaleString().substring(0, 8) }}</span>
           </template>
         </el-table-column>
         <el-table-column label="买操作" width="200">
@@ -55,6 +55,7 @@ export default {
        backTest(this.stockInfo).then(res => {
         if(res.success) {
           alert('成功')
+          this.selectReplayList()
         } else {
           this.$message.error(res.errorMessage)
         }

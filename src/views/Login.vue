@@ -11,6 +11,12 @@
         class="demo-ruleForm"
         hide-required-asterisk
       >
+        <el-form-item>
+          <el-alert
+            type="success"
+            description="线上演示环境使用奇文社区账号进行登录，网址：www.qiwenshare.com">
+          </el-alert>
+        </el-form-item>
         <el-form-item prop="userName">
           <el-input
             prefix-icon="el-icon-mobile-phone"
@@ -26,7 +32,6 @@
             show-password
           ></el-input>
         </el-form-item>
-        <el-form-item></el-form-item>
         <!-- <el-form-item class="forgetPassword">忘记密码</el-form-item> -->
         <el-form-item class="loginButtonWrapper">
           <el-button
@@ -66,7 +71,7 @@ export default {
   data() {
     return {
       loginTitle: '登录',
-      loginSystem: '奇文网盘',
+      loginSystem: '奇文股票',
       ruleForm: {
         userName: '',
         password: ''

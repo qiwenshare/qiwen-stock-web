@@ -6,7 +6,7 @@
       mode="horizontal"
     >
       <el-menu-item class="iconfont headerLogo" disabled>
-        <a href="https://www.qiwenshare.com/">
+        <a href="https://www.qiwenshare.com/" target="_blank">
           <img class="logo" :src="logoUrl" />
         </a>
       </el-menu-item>

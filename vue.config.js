@@ -30,9 +30,9 @@ module.exports = {
 
   //  模块大小分析工具
   chainWebpack: config => {
-    config
-      .plugin('webpack-bundle-analyzer')
-      .use(require('webpack-bundle-analyzer').BundleAnalyzerPlugin)
+    //config
+    //  .plugin('webpack-bundle-analyzer')
+    //  .use(require('webpack-bundle-analyzer').BundleAnalyzerPlugin)
   },
 
   //  打包配置

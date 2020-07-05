@@ -20,19 +20,19 @@ axios.interceptors.response.use(
   // 服务器状态码不是200的情况 
   error => {
     if (error.response.status) {
-      switch (error.response.status) {
-        case 500:
-          router.replace({ name: 'Error_500' })
-          break;
-        case 401:
-          router.replace({ name: 'Error_401' })
-          break;
-        case 404:
-          router.replace({ name: 'Error_404' })
-          break;
-        default:
-          return Promise.reject(error.response);
-      }
+      // switch (error.response.status) {
+      //   case 500:
+      //     router.replace({ name: 'Error_500' })
+      //     break;
+      //   case 401:
+      //     router.replace({ name: 'Error_401' })
+      //     break;
+      //   case 404:
+      //     router.replace({ name: 'Error_404' })
+      //     break;
+      //   default:
+      //     return Promise.reject(error.response);
+      // }
     }
   }
 );

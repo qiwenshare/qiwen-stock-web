@@ -47,17 +47,17 @@ export default new Vuex.Store({
   },
   actions: {
     getUserInfo(context) {
-      return checkUserLoginInfo().then(res => {
-        if(res.success) {
-          context.commit("changeLogin", res.success)
-          context.commit("changeUsername", res.data.username)
-          context.commit("changeUserId", res.data.userId)
-          context.commit('changeUserImgUrl',res.data.imageurl);
-          context.commit('changeUserInfoObj',res.data)
-        } else {
-          context.commit("changeLogin", res.success)
-        }
-      })
+      // return checkUserLoginInfo().then(res => {
+      //   if(res.success) {
+      //     context.commit("changeLogin", res.success)
+      //     context.commit("changeUsername", res.data.username)
+      //     context.commit("changeUserId", res.data.userId)
+      //     context.commit('changeUserImgUrl',res.data.imageurl);
+      //     context.commit('changeUserInfoObj',res.data)
+      //   } else {
+      //     context.commit("changeLogin", res.success)
+      //   }
+      // })
     }
   }
 })

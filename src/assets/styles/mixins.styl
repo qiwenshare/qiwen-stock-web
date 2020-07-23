@@ -1,26 +1,16 @@
-ellipsis()
-	/*完成字符串太长省略显示为...的功能*/
-	overflow:hidden
-	white-space:nowrap
-	text-overflow:ellipsis
-verticalMiddle()
-	/*垂直方向居中*/
-	display:flex
-	flex-direction:column
-	justify-content:center
-verticalFlexEnd()
-	/*垂直方向居底*/
-	display:flex
-	flex-direction:column
-	justify-content:flex-end
-title()
-	/*标题*/
-	display: flex
-	height:30px
-	line-height:30px
-	color:#303133
-	.iconfont
-		color: #409EFF
-		font-size: 26px
-		margin-right: 6px
-	
+setScrollbar(scrollbarWidth)
+	//  修改滚动条下面的宽度
+	&::-webkit-scrollbar
+		width scrollbarWidth
+	//  修改滚动条的下面的样式
+	&::-webkit-scrollbar-track
+		background-color #EBEEF5
+		-webkit-border-radius 2em
+		-moz-border-radius 2em
+		border-radius 2em
+	//  修改滑块
+	&::-webkit-scrollbar-thumb
+		background-color #909399
+		-webkit-border-radius 2em
+		-moz-border-radius 2em
+		border-radius 2em

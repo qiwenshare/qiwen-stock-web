@@ -7,13 +7,13 @@ import '@/assets/styles/css/base.css'
 import '@/assets/styles/css/border.css'
 import '@/assets/styles/css/element-cover.css'
 import '@/assets/styles/css/mediaScreen.styl'
-import '@/assets/styles/iconfont/iconfont.css'
 import '@/router/before.js'
+import 'element-ui/lib/theme-chalk/index.css'
+import element from './element.js'
 
 Vue.config.productionTip = false;
 Vue.use(all);
-
-Vue.config.devtools = true
+// Vue.use(element);
 
 new Vue({
   router,

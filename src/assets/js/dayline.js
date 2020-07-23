@@ -24,7 +24,7 @@ function timestampToDate(timestamp) {
 }
 
 
-function getOption(data, indicatorType){
+function getOption(kChart, data, indicatorType){
     var option = kChart.getOption();
     option.xAxis= getXAxis(data, indicatorType);
     option.yAxis = getYAxis(indicatorType);
@@ -724,6 +724,7 @@ function initSeriesData(data){
 }
 
 export {
-    makeOption
+    makeOption,
+    getOption
 }
 

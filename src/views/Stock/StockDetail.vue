@@ -67,19 +67,22 @@
       <template>
         <el-tabs v-model="activeName" @tab-click="tabClick">
           <el-tab-pane label="分时线" name="first">
-            <div id="k-chart" class="main-chart"></div>
           </el-tab-pane>
           <el-tab-pane label="日线" name="second">
-            <div id="day-chart" class="main-chart"></div>
           </el-tab-pane>
           <el-tab-pane label="周线" name="third">
-            <div id="week-chart" class="main-chart"></div>
           </el-tab-pane>
           <el-tab-pane label="月线" name="fourth">
-            <div id="month-chart" class="main-chart"></div>
           </el-tab-pane>
         </el-tabs>
+        <div id="k-chart" class="main-chart"></div>
       </template>
+    </div>
+    <div id="changeOptionId" style="padding-left: 40px;">
+        <button @click="changeOptionType(1)" style="width:60px;" class="layui-btn layui-btn-xs layui-btn-normal">成交量</button>
+        <button @click="changeOptionType(2)" style="width:60px;" class="layui-btn layui-btn-xs layui-btn-normal">macd</button>
+        <button @click="changeOptionType(3)" style="width:60px;" class="layui-btn layui-btn-xs layui-btn-normal">kdj</button>
+        <button @click="changeOptionType(4)" style="width: 60px;" class="layui-btn layui-btn-xs layui-btn-normal">rsi</button>
     </div>
     <div>
       <BackTest v-if="stockInfo" :stockInfo="stockInfo"></BackTest>
@@ -97,7 +100,7 @@ import {
   getStockmonthbar
 } from '@/request/stock.js'
 import { initMOption } from '@/assets/js/timeline.js'
-import { makeOption } from '@/assets/js/dayline.js'
+import { makeOption,getOption } from '@/assets/js/dayline.js'
 import BackTest from './components/BackTest.vue'
 export default {
   name: 'StockDetail',
@@ -129,14 +132,18 @@ export default {
       stockDayDataSave: [],
       stockWeekDataSave: [],
       stockMonthDataSave: [],
-      echarts: {}
+      echarts: {},
+      kChart:{}
     }
   },
   created() {
     this.echarts = require('echarts')
+    
     this.getStockInfoById(this.stockNum)
   },
   mounted() {
+    var dom = document.getElementById('k-chart')
+    this.kChart = this.echarts.init(dom)
     this.getStocktimebar(this.stockNum)
   },
   computed: {
@@ -145,24 +152,18 @@ export default {
     }
   },
   methods: {
-    tabClick(tab) {
+    changeOptionType(indicatorType){
+        this.kChart.setOption(getOption(this.kChart, this.stockDayDataSave, indicatorType), true);
+    },
+    tabClick(tab) { 
       if (tab.name == 'first') {
-        // var dom = document.getElementById("day-chart");
-        // let dayChart = echarts.init(dom);
-        // var VOLUMN_TYPE = 1;
-        // dayChart.setOption(makeOption(this.stockDayDataSave, VOLUMN_TYPE), true);
+        this.getStocktimebar(this.stockNum)
       } else if (tab.name == 'second') {
-        if (this.stockDayDataSave.length == 0) {
           this.getStockdaybar(this.stockNum)
-        }
       } else if (tab.name == 'third') {
-        if (this.stockWeekDataSave.length == 0) {
           this.getStockweekbar(this.stockNum)
-        }
       } else {
-        if (this.stockMonthDataSave == 0) {
           this.getStockmonthbar(this.stockNum)
-        }
       }
     },
     getStocktimebar(searchText) {
@@ -170,10 +171,9 @@ export default {
         stockNum: searchText
       }
       getStocktimebar(data).then(res => {
-        var echarts = require('echarts')
-        var dom = document.getElementById('k-chart')
-        let mDataChart = echarts.init(dom)
-        mDataChart.setOption(initMOption(res.reverse(), 'hs'), true)
+        // var echarts = require('echarts')
+        
+        this.kChart.setOption(initMOption(res.reverse(), 'hs'), true)
       })
     },
     getStockdaybar(searchText) {
@@ -183,10 +183,8 @@ export default {
       let _this = this
       getStockdaybar(data).then(res => {
         _this.stockDayDataSave = res.reverse()
-        var dayDom = document.getElementById('day-chart')
-        let dayChart = this.echarts.init(dayDom)
         var VOLUMN_TYPE = 1
-        dayChart.setOption(makeOption(res, VOLUMN_TYPE), true)
+        this.kChart.setOption(makeOption(res, VOLUMN_TYPE), true)
       })
     },
     getStockweekbar(searchText) {
@@ -194,14 +192,12 @@ export default {
         stockNum: searchText
       }
       let _this = this
-      // stockInfo.stockNum = searchText; // "sh000001";
+      
       getStockweekbar(data).then(res => {
         _this.stockWeekDataSave = res.reverse()
-        var weekDom = document.getElementById('week-chart')
-        let weekChart = this.echarts.init(weekDom)
+      
         var VOLUMN_TYPE = 1
-        weekChart.setOption(makeOption(res, VOLUMN_TYPE), true)
-        //mDataChart.setOption(initMOption(res.reverse(), "hs"), true);
+        this.kChart.setOption(makeOption(res, VOLUMN_TYPE), true)
       })
     },
     getStockmonthbar(searchText) {
@@ -209,17 +205,16 @@ export default {
         stockNum: searchText
       }
       let _this = this
-      // stockInfo.stockNum = searchText; // "sh000001";
+      
       getStockmonthbar(data).then(res => {
         _this.stockMonthDataSave = res.reverse()
-        var monthDom = document.getElementById('month-chart')
-        let monthChart = this.echarts.init(monthDom)
+        
         var VOLUMN_TYPE = 1
-        monthChart.setOption(
+        this.kChart.setOption(
           makeOption(this.stockMonthDataSave, VOLUMN_TYPE),
           true
         )
-        //mDataChart.setOption(initMOption(res.reverse(), "hs"), true);
+        
       })
     },
     queryStockByFilter(query) {

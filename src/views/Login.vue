@@ -14,7 +14,7 @@
         <el-form-item>
           <el-alert
             type="success"
-            description="线上演示环境使用奇文社区账号进行登录，网址：www.qiwenshare.com">
+            description="请注册后登录，注册数据不会长期保留，仅供开发测试使用">
           </el-alert>
         </el-form-item>
         <el-form-item prop="userName">

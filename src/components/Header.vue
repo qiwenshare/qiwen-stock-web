@@ -10,7 +10,7 @@
       <el-menu-item
         class="headerItem"
         index="1"
-        :route="{ name: 'File', query: { filepath: '/', filetype: 0 } }"
+        :route="{ name: 'Stock'}"
       >股票</el-menu-item>
       <el-menu-item class="headerItem userDisplay right-menu-item" index="2" v-show="isLogin">
         <el-avatar :size="34" :src="userImgUrl" fit="cover">

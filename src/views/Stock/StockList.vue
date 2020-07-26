@@ -31,54 +31,6 @@
               </div>
             </div>
           </div>
-          <!-- <div class="pure-u-1-5">
-            <div class="index" id="szcz-panel">
-              <h2>深证成指</h2>
-              <div class="stock-down">
-                <span>2701.73</span>
-                <p>
-                  <i class="el-icon-bottom"></i>43.89
-                  <i class="el-icon-bottom"></i>1.60%
-                </p>
-              </div>
-            </div>
-          </div>
-          <div class="pure-u-1-5">
-            <div class="index" id="cybz-panel">
-              <h2>创业板指</h2>
-              <div class="stock-down">
-                <span>2701.73</span>
-                <p>
-                  <i class="el-icon-bottom"></i>43.89
-                  <i class="el-icon-bottom"></i>1.60%
-                </p>
-              </div>
-            </div>
-          </div>
-          <div class="pure-u-1-5">
-            <div class="index" id="hszs-panel">
-              <h2>恒生指数</h2>
-              <div class="stock-down">
-                <span>2701.73</span>
-                <p>
-                  <i class="el-icon-bottom"></i>43.89
-                  <i class="el-icon-bottom"></i>1.60%
-                </p>
-              </div>
-            </div>
-          </div>
-          <div class="pure-u-1-5">
-            <div class="index" id="dqszs-panel">
-              <h2>道琼斯指数</h2>
-              <div class="stock-down">
-                <span>2701.73</span>
-                <p>
-                  <i class="el-icon-bottom"></i>43.89
-                  <i class="el-icon-bottom"></i>1.60%
-                </p>
-              </div>
-            </div>
-          </div> -->
         </div>
       </div>
     </div>
@@ -91,6 +43,7 @@
         <el-button @click="updateStockWeekInfo()" type="primary" style="margin-left: 16px;">更新周线</el-button>
         <el-button @click="updateStockMonthInfo()" type="primary" style="margin-left: 16px;">更新月线</el-button>
       </el-drawer>
+      <el-progress :text-inside="true" :stroke-width="26" :percentage="percentageData"></el-progress>
     </div>
     <div>
       <el-table :data="stockTableData" style="width: 100%">
@@ -185,14 +138,72 @@ export default {
       stockTableData: [],
       drawer: false,
       direction: 'rtl',
-      shStock:[]
+      shStock:[],
+      percentageData: 1
     }
   },
   created() {
     this.getStockList()
     this.getShStock()
+    this.initSocket()
   },
   methods: {
+      getSocket () {
+        var webSocket = null;
+        var connectUrl = "";
+      
+        if (window.location.protocol == 'http:') {
+            connectUrl = 'ws://localhost:8080/websocket/' + "stock";
+        } else {
+            connectUrl = 'wss://localhost:8080/websocket/' + "stock";
+        }
+
+        if ('WebSocket' in window) {
+            webSocket = new WebSocket(connectUrl);
+        } else if ('MozWebSocket' in window) {
+            webSocket = new MozWebSocket(connectUrl);
+        } else {
+            Console.log('Error: WebSocket is not supported by this browser.');
+            return;
+        }
+        return webSocket;
+
+    },
+    initSocket() {
+      let socket = this.getSocket();
+      let _this = this;
+
+      socket.onopen = function () {
+          console.log('Info: WebSocket connection opened.');
+      };
+
+      socket.onmessage = function (message) {
+          var result = JSON.parse(message.data);
+          if (result.runTask == true) {
+              // $("#stockdayinfoProcessId").show();
+              console.log(JSON.stringify(result))
+              debugger
+              var totalCount = result.totalCount;
+              var completeCount = result.completeCount;
+              var taskInfo = result.taskInfo;
+              var fenzi = completeCount / totalCount * 100;
+              _this.percentageData = fenzi.toFixed(0)
+              console.log(this.percentageData)
+              // layui.element.progress('demo', (fenzi + "").substr(0, (fenzi + "").indexOf(".") + 3) + '%')
+              // $("#processInfo").text(result.taskInfo)
+              console.log("接受消息：" + result.runTask);
+          } else {
+              $("#stockdayinfoProcessId").hide();
+          }
+
+      };
+
+      /*
+      socket.onclose = function() {
+          document.getElementById('chat').onkeydown = null;
+          Console.log('Info: WebSocket closed.');
+      };*/
+    },
     getShStock(){
       getShStock().then(res => {
         this.shStock = res.list

@@ -37,13 +37,27 @@
     <div>
       <el-button @click="drawer = true" type="primary" style="margin-left: 16px;">操作</el-button>
       <el-drawer :visible.sync="drawer" :direction="direction" :before-close="handleClose">
-        <el-button @click="updateStockList()" type="primary" style="margin-left: 16px;">更新股票列表</el-button>
-        <el-button @click="updateStockTimeInfo()" type="primary" style="margin-left: 16px;">更新分时线</el-button>
-        <el-button @click="updateStockDayInfo()" type="primary" style="margin-left: 16px;">更新日线</el-button>
-        <el-button @click="updateStockWeekInfo()" type="primary" style="margin-left: 16px;">更新周线</el-button>
-        <el-button @click="updateStockMonthInfo()" type="primary" style="margin-left: 16px;">更新月线</el-button>
+        <div class="drawerSwapper" style="margin:10px;">
+          <el-button round  size="mini" @click="updateStockList()" type="primary" style="margin-left: 16px;">更新股票列表</el-button>
+          
+          <el-divider><el-button icon="el-icon-refresh" round  size="mini" @click="updateStockTimeInfo()" type="primary" style="margin-left: 16px;">更新分时线</el-button></el-divider>
+          <div>{{timeTaskInfo}}</div>
+          <el-progress  :text-inside="true" :percentage="percentageTimeData"></el-progress>
+          
+          <el-divider><el-button icon="el-icon-refresh"  round size="mini" @click="updateStockDayInfo()" type="primary" style="margin-left: 16px;">更新日线</el-button></el-divider>
+          <div>{{dayTaskInfo}}</div>
+          <el-progress  :text-inside="true" :percentage="percentageDayData"></el-progress>
+          
+          <el-divider><el-button icon="el-icon-refresh"  round size="mini" @click="updateStockWeekInfo()" type="primary" style="margin-left: 16px;">更新周线</el-button></el-divider>
+          <div>{{weekTaskInfo}}</div>
+          <el-progress   :text-inside="true" :percentage="percentageWeekData"></el-progress>
+          
+          <el-divider><el-button icon="el-icon-refresh" round  size="mini" @click="updateStockMonthInfo()" type="primary" style="margin-left: 16px;">更新月线</el-button></el-divider>
+          <div>{{monthTaskInfo}}</div>
+          <el-progress  :text-inside="true" :percentage="percentageMonthData"></el-progress>
+        </div>
       </el-drawer>
-      <el-progress :text-inside="true" :stroke-width="26" :percentage="percentageData"></el-progress>
+      
     </div>
     <div>
       <el-table :data="stockTableData" style="width: 100%">
@@ -139,7 +153,14 @@ export default {
       drawer: false,
       direction: 'rtl',
       shStock:[],
-      percentageData: 1
+      percentageTimeData: 0,
+      percentageDayData: 0,
+      percentageWeekData: 0,
+      percentageMonthData: 0,
+      timeTaskInfo : "",
+      dayTaskInfo : "",
+      weekTaskInfo : "",
+      monthTaskInfo : ""
     }
   },
   created() {
@@ -182,13 +203,30 @@ export default {
           if (result.runTask == true) {
               // $("#stockdayinfoProcessId").show();
               console.log(JSON.stringify(result))
-              debugger
+              var taskId = result.taskId;
+              
               var totalCount = result.totalCount;
               var completeCount = result.completeCount;
               var taskInfo = result.taskInfo;
               var fenzi = completeCount / totalCount * 100;
-              _this.percentageData = fenzi.toFixed(0)
-              console.log(this.percentageData)
+              if (taskId == 0) {
+                _this.percentageTimeData = fenzi.toFixed(0)
+                _this.timeTaskInfo = taskInfo
+              }
+              if (taskId == 1) {
+                _this.percentageDayData = fenzi.toFixed(0)
+                _this.dayTaskInfo = taskInfo
+              }
+              if (taskId == 2) {
+                _this.percentageWeekData = fenzi.toFixed(0)
+                _this.weekTaskInfo = taskInfo
+              }
+              if (taskId == 3) {
+                _this.percentageMonthData = fenzi.toFixed(0)
+                _this.monthTaskInfo = taskInfo
+              }
+              
+              console.log(this.percentageDayData)
               // layui.element.progress('demo', (fenzi + "").substr(0, (fenzi + "").indexOf(".") + 3) + '%')
               // $("#processInfo").text(result.taskInfo)
               console.log("接受消息：" + result.runTask);

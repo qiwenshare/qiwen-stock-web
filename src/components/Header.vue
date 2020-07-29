@@ -2,13 +2,13 @@
   <div class="headerWrapper">
     <el-menu :default-active="activeIndex" class="el-menu-demo" mode="horizontal" router>
       <el-menu-item class="headerLogo" index="0" disabled>
-        <a href="https://www.qiwenshare.com/" target="_blank">
+        <a href="https://www.qiwenshare.com/" target="_blank" style="font-size: 20px;font-weight: bold;">
           <!-- <img class="logo" :src="logoUrl" /> -->
           奇文股票
         </a>
       </el-menu-item>
       <el-menu-item
-        class="headerItem"
+        class="headerItem" 
         index="1"
         :route="{ name: 'Stock'}"
       >股票</el-menu-item>

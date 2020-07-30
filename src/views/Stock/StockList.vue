@@ -174,9 +174,9 @@ export default {
         var connectUrl = "";
       
         if (window.location.protocol == 'http:') {
-            connectUrl = 'ws://121.89.222.103:8764/websocket/' + "stock";
+            connectUrl = 'ws://localhost:8764/websocket/' + "stock";
         } else {
-            connectUrl = 'wss://121.89.222.103:8764/websocket/' + "stock";
+            connectUrl = 'wss://localhost:8764/websocket/' + "stock";
         }
  
         if ('WebSocket' in window) {

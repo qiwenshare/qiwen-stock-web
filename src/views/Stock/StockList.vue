@@ -174,11 +174,11 @@ export default {
         var connectUrl = "";
       
         if (window.location.protocol == 'http:') {
-            connectUrl = 'ws://123.56.9.174:8764/websocket/' + "stock";
+            connectUrl = 'ws://121.89.222.103:8764/websocket/' + "stock";
         } else {
-            connectUrl = 'wss://123.56.9.174:8764/websocket/' + "stock";
+            connectUrl = 'wss://121.89.222.103:8764/websocket/' + "stock";
         }
-
+ 
         if ('WebSocket' in window) {
             webSocket = new WebSocket(connectUrl);
         } else if ('MozWebSocket' in window) {

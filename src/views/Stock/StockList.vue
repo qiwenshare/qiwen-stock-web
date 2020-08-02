@@ -40,19 +40,39 @@
         <div class="drawerSwapper" style="margin:10px;">
           <el-button round  size="mini" @click="updateStockList()" type="primary" style="margin-left: 16px;">更新股票列表</el-button>
           
-          <el-divider><el-button icon="el-icon-refresh" round  size="mini" @click="updateStockTimeInfo()" type="primary" style="margin-left: 16px;">更新分时线</el-button></el-divider>
+          <el-divider>
+            <div style="display:flex;">
+              <el-button icon="el-icon-refresh" round  size="mini" @click="updateStockTimeInfo()" type="primary" style="margin-left: 16px;">更新分时线</el-button>
+              <el-button icon="el-icon-refresh" round  size="mini" @click="stopUpdateTaskByType(1)" type="danger" style="margin-left: 16px;">停止更新</el-button>
+            </div>
+          </el-divider>
           <div>{{timeTaskInfo}}</div>
           <el-progress  :text-inside="true" :percentage="percentageTimeData"></el-progress>
           
-          <el-divider><el-button icon="el-icon-refresh"  round size="mini" @click="updateStockDayInfo()" type="primary" style="margin-left: 16px;">更新日线</el-button></el-divider>
+          <el-divider>
+            <div style="display:flex;">
+              <el-button icon="el-icon-refresh"  round size="mini" @click="updateStockDayInfo()" type="primary" style="margin-left: 16px;">更新日线</el-button>
+              <el-button icon="el-icon-refresh" round  size="mini" @click="stopUpdateTaskByType(2)" type="danger" style="margin-left: 16px;">停止更新</el-button>
+            </div>
+          </el-divider>
           <div>{{dayTaskInfo}}</div>
           <el-progress  :text-inside="true" :percentage="percentageDayData"></el-progress>
           
-          <el-divider><el-button icon="el-icon-refresh"  round size="mini" @click="updateStockWeekInfo()" type="primary" style="margin-left: 16px;">更新周线</el-button></el-divider>
+          <el-divider>
+            <div style="display:flex;">
+              <el-button icon="el-icon-refresh"  round size="mini" @click="updateStockWeekInfo()" type="primary" style="margin-left: 16px;">更新周线</el-button>
+              <el-button icon="el-icon-refresh" round  size="mini" @click="stopUpdateTaskByType(3)" type="danger" style="margin-left: 16px;">停止更新</el-button>
+            </div>
+          </el-divider>
           <div>{{weekTaskInfo}}</div>
           <el-progress   :text-inside="true" :percentage="percentageWeekData"></el-progress>
           
-          <el-divider><el-button icon="el-icon-refresh" round  size="mini" @click="updateStockMonthInfo()" type="primary" style="margin-left: 16px;">更新月线</el-button></el-divider>
+          <el-divider>
+            <div style="display:flex;">
+              <el-button icon="el-icon-refresh" round  size="mini" @click="updateStockMonthInfo()" type="primary" style="margin-left: 16px;">更新月线</el-button>
+              <el-button icon="el-icon-refresh" round  size="mini" @click="stopUpdateTaskByType(4)" type="danger" style="margin-left: 16px;">停止更新</el-button>
+            </div>
+          </el-divider>
           <div>{{monthTaskInfo}}</div>
           <el-progress  :text-inside="true" :percentage="percentageMonthData"></el-progress>
         </div>
@@ -142,6 +162,7 @@ import {
   updateStockTimeInfo,
   updateStockWeekInfo,
   updateStockMonthInfo,
+  stopUpdateTaskByType,
   getShStock
 } from '@/request/stock.js'
 
@@ -174,9 +195,9 @@ export default {
         var connectUrl = "";
       
         if (window.location.protocol == 'http:') {
-            connectUrl = 'ws://localhost:8764/websocket/' + "stock";
+            connectUrl = 'ws://localhost:8080/websocket/' + "stock";
         } else {
-            connectUrl = 'wss://localhost:8764/websocket/' + "stock";
+            connectUrl = 'wss://localhost:8080/websocket/' + "stock";
         }
  
         if ('WebSocket' in window) {
@@ -301,6 +322,15 @@ export default {
       updateStockTimeInfo().then(res => {
         if (res.success) {
           alert('成功')
+        } else {
+          this.$message.error(res.errorMessage)
+        }
+      })
+    },
+    stopUpdateTaskByType(taskType) {
+      stopUpdateTaskByType({"taskType": taskType}).then(res => {
+        if (res.success) {
+          alert('已停止')
         } else {
           this.$message.error(res.errorMessage)
         }

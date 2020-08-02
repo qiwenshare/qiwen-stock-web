@@ -7,6 +7,7 @@ export const updateStockDayInfo = p => get('/stock/updatestockdayinfo', p);
 export const updateStockTimeInfo = p => get('/stock/updatestocktimeinfo', p);
 export const updateStockWeekInfo = p => get('/stock/updatestockweekinfo', p);
 export const updateStockMonthInfo = p => get('/stock/updatestockmonthinfo', p);
+export const stopUpdateTaskByType = p => get('/stock/stopupdatetaskbytype', p);
 
 export const getStocktimebar = p => get('/stock/getstocktimebar', p);
 export const getStockdaybar = p => get('/stock/getstockdaybar', p);

@@ -45,6 +45,9 @@ export default {
     }
   },
   created() {
+    
+  },
+  mounted() {
     this.selectReplayList()
   },
   props: {

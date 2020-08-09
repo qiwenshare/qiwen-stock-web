@@ -84,6 +84,20 @@
         <button @click="changeOptionType(3)" style="width:60px;" class="layui-btn layui-btn-xs layui-btn-normal">kdj</button>
         <button @click="changeOptionType(4)" style="width: 60px;" class="layui-btn layui-btn-xs layui-btn-normal">rsi</button>
     </div>
+    
+    <div id="echnicalaspectId">
+      <el-divider>趋势</el-divider>
+      <span>暂无</span>
+      <el-divider>市场景气程度</el-divider>
+      <span>{{prosperitylevel}}</span>
+      <el-divider>市场趋势</el-divider>
+      <span>{{market}}</span>
+      <el-divider>买卖点</el-divider>
+      <span>暂无</span>
+      <el-divider>资金异动</el-divider>
+      <span>{{abnormalaction}}</span>
+    </div>
+
     <div>
       <BackTest v-if="stockInfo" :stockInfo="stockInfo"></BackTest>
     </div>
@@ -97,7 +111,8 @@ import {
   getStockInfoById,
   getStockdaybar,
   getStockweekbar,
-  getStockmonthbar
+  getStockmonthbar,
+  getEchnicalaspect
 } from '@/request/stock.js'
 import { initMOption } from '@/assets/js/timeline.js'
 import { makeOption,getOption } from '@/assets/js/dayline.js'
@@ -133,18 +148,23 @@ export default {
       stockWeekDataSave: [],
       stockMonthDataSave: [],
       echarts: {},
-      kChart:{}
+      kChart:{},
+      prosperitylevel: "",
+      market: "",
+      abnormalaction: ""
     }
   },
   created() {
     this.echarts = require('echarts')
     
     this.getStockInfoById(this.stockNum)
+    
   },
   mounted() {
     var dom = document.getElementById('k-chart')
     this.kChart = this.echarts.init(dom)
     this.getStocktimebar(this.stockNum)
+    
   },
   computed: {
     stockNum() {
@@ -152,6 +172,30 @@ export default {
     }
   },
   methods: {
+    getEchnicalaspect(stockid) {
+      let _this = this
+      getEchnicalaspect({stockid:stockid}).then(res => {
+        let rawData = res;
+        if (rawData.prosperitylevel == 1) {
+            _this.prosperitylevel = "极弱，建议买入";
+        } else if (rawData.prosperitylevel == 2) {
+            _this.prosperitylevel = "弱，建议观望";
+        } else if (rawData.prosperitylevel == 3) {
+            _this.prosperitylevel = "强，建议买入";
+        } else if (rawData.prosperitylevel == 4) {
+            _this.prosperitylevel = "极强，建议卖出";
+        }
+
+        if (rawData.bullMarket == 1) {
+            _this.market = "多头市场，以持股为主要策略，操作为高抛或减仓，落袋为安";
+        } else if (rawData.bearMarket == 1) {
+            _this.market = "空头市场，以持币为主要策略，操作为低吸，等待下一波上涨行情";
+        } else {
+            _this.market = "暂无明确趋势，建议观望为主";
+        }
+      })
+      
+    },
     changeOptionType(indicatorType){
         this.kChart.setOption(getOption(this.kChart, this.stockDayDataSave, indicatorType), true);
     },
@@ -261,6 +305,8 @@ export default {
           '流通市值：' + (rawData.flowmarketvalue / 100000000).toFixed(2) + '亿'
         _this.totalFlowShares =
           '流通股本：' + (rawData.totalFlowShares / 100000000).toFixed(2) + '亿'
+
+        _this.getEchnicalaspect(rawData.stockid)
       })
     }
   }

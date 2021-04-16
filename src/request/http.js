@@ -1,5 +1,19 @@
 import axios from "axios"
 import router from '@/router/router.js'
+import { MessageBox } from 'element-ui';
+
+// 登录提醒
+const loginTip = function () {
+  MessageBox.alert('您尚未登录，请先登录', '操作提示', {
+    confirmButtonText: '确定',
+    callback: () => {
+      router.push({
+        path: '/login',
+        query: { Rurl: router.currentRoute.fullPath }  //  将当前页面的url传递给login页面进行操作
+      })
+    }
+  });
+}
 
 // 请求超时时间
 axios.defaults.timeout = 10000 * 5;
@@ -20,90 +34,100 @@ axios.interceptors.response.use(
   // 服务器状态码不是200的情况 
   error => {
     if (error.response.status) {
-      // switch (error.response.status) {
-      //   case 500:
-      //     router.replace({ name: 'Error_500' })
-      //     break;
-      //   case 401:
-      //     router.replace({ name: 'Error_401' })
-      //     break;
-      //   case 404:
-      //     router.replace({ name: 'Error_404' })
-      //     break;
-      //   default:
-      //     return Promise.reject(error.response);
-      // }
+      console.log(error.response)
+      switch (error.response.status) {
+        case 401:
+          loginTip()
+          break
+        default:
+          return Promise.reject(error.response)
+      }
     }
   }
 );
-/** 
-* get方法，对应get请求 
-*/
-export function get(url, params, info = '') {
+
+/**
+ * 封装 get方法 对应 GET 请求
+ * @param {string} url 请求url
+ * @param {object} params 查询参数
+ * @returns {Promise}
+ */
+export function get(url, params) {
   return new Promise((resolve, reject) => {
-    axios.get(url + info, {
-      params: params
-    })
-      .then(res => {
-        resolve(res.data);
+    axios
+      .get(url, {
+        params: params
       })
-      .catch(err => {
+      .then((res) => {
+        resolve(res.data)
+      })
+      .catch((err) => {
         reject(err.data)
       })
-  });
+  })
 }
-/** 
- * post方法，对应post请求 
- * info为 true，formData格式；
- * info为 undefined或false，是json格式
+/**
+ * 封装 post 方法，对应 POST 请求
+ * @param {string} url 请求url
+ * @param {object} data 请求体
+ * @param {boolean | undefined} info 请求体是否为 FormData 格式
+ * @returns {Promise}
  */
 export function post(url, data = {}, info) {
   return new Promise((resolve, reject) => {
     let newData = data
-    if (info) {  //  转formData格式
-      newData = new FormData();
+    if (info) {
+      //  转formData格式
+      newData = new FormData()
       for (let i in data) {
-        newData.append(i, data[i]);
+        newData.append(i, data[i])
       }
     }
-    axios.post(url, newData)
-      .then(res => {
-        resolve(res.data);
+    axios
+      .post(url, newData)
+      .then((res) => {
+        resolve(res.data)
       })
-      .catch(err => {
-        reject(err.data)
-      })
-  });
-}
-
-/**
- * 封装put请求
- */
-
-export function put(url, params = {}, info = "") {
-  return new Promise((resolve, reject) => {
-    axios.put(url + info, params)
-      .then(res => {
-        resolve(res.data);
-      }, err => {
+      .catch((err) => {
         reject(err.data)
       })
   })
 }
 
 /**
-* 封装delete请求
-*/
-export function axiosDelete(url, params = {}, info = "") {
+ * 封装 put 方法，对应 PUT 请求
+ * @param {string} url 请求url
+ * @param {object} params 请求体
+ * @returns {Promise}
+ */
+export function put(url, params = {}) {
   return new Promise((resolve, reject) => {
-    axios.delete(url + info, {
-      params: params
-    })
-      .then(res => {
-        resolve(res.data);
+    axios.put(url, params).then(
+      (res) => {
+        resolve(res.data)
+      },
+      (err) => {
+        reject(err.data)
+      }
+    )
+  })
+}
+
+/**
+ * 封装 axiosDelete 方法，对应 DELETE 请求
+ * @param {string} url 请求url
+ * @param {object} params 请求体
+ * @returns {Promise}
+ */
+export function axiosDelete(url, params = {}) {
+  return new Promise((resolve, reject) => {
+    axios
+      .delete(url, params)
+      .then((res) => {
+        resolve(res.data)
       })
-      .catch(err => {
+      .catch((err) => {
         reject(err.data)
       })
-  });
+  })
 }

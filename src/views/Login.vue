@@ -1,36 +1,24 @@
 <template>
-  <div class="loginWrapper" id="loginBackground">
-    <div class="formWrapper">
-      <h1 class="loginTitle">{{ loginTitle }}</h1>
-      <p class="loginSystem">{{ loginSystem }}</p>
+  <div class="login-wrapper" id="loginBackground">
+    <div class="login-form-wrapper">
+      <h1 class="login-title">登录</h1>
+      <p class="login-system">奇文股票</p>
       <el-form
-        :model="ruleForm"
-        :rules="rules"
-        ref="ruleForm"
+        class="login-form"
+        :model="loginForm"
+        :rules="loginFormRules"
+        ref="loginForm"
         label-width="100px"
-        class="demo-ruleForm"
         hide-required-asterisk
       >
         <el-form-item>
-          <el-alert
-            type="success"
-            description="请注册后登录，注册数据不会长期保留，仅供开发测试使用">
-          </el-alert>
+          <el-alert type="success" description="请注册后登录，注册数据不会长期保留，仅供开发测试使用"> </el-alert>
         </el-form-item>
         <el-form-item prop="userName">
-          <el-input
-            prefix-icon="el-icon-mobile-phone"
-            v-model="ruleForm.userName"
-            placeholder="手机号"
-          ></el-input>
+          <el-input prefix-icon="el-icon-mobile-phone" v-model="loginForm.userName" placeholder="手机号"></el-input>
         </el-form-item>
         <el-form-item prop="password">
-          <el-input
-            prefix-icon="el-icon-lock"
-            v-model="ruleForm.password"
-            placeholder="密码"
-            show-password
-          ></el-input>
+          <el-input prefix-icon="el-icon-lock" v-model="loginForm.password" placeholder="密码" show-password></el-input>
         </el-form-item>
         <el-form-item>
           <drag-verify
@@ -38,23 +26,18 @@
             text="请按住滑块拖动解锁"
             successText="验证通过"
             handlerIcon="el-icon-d-arrow-right"
+            handlerBg="#F5F7FA"
             successIcon="el-icon-circle-check"
             :width="375"
-            handlerBg="#F5F7FA"
             :isPassing.sync="isPassing"
             @update:isPassing="updateIsPassing"
           ></drag-verify>
         </el-form-item>
-        <!-- <el-form-item class="forgetPassword">忘记密码</el-form-item> -->
-        <el-form-item class="loginButtonWrapper">
-          <el-button class="loginButton" type="primary" :disabled="submitDisabled" @click="submitForm('ruleForm')">登录</el-button>
+        <el-form-item class="login-btn-form-item">
+          <el-button class="login-btn" type="primary" :disabled="submitDisabled" @click="submitForm('loginForm')"
+            >登录</el-button
+          >
         </el-form-item>
-        <!-- <el-form-item style="text-align:left;">
-          其他账号登录：
-          <a href="/api/user/login/qq">
-            <img :src="qqIcon" style="width: 30px;" />
-          </a>
-        </el-form-item> -->
       </el-form>
     </div>
   </div>
@@ -79,19 +62,20 @@ export default {
   components: { DragVerify },
   data() {
     return {
-      loginTitle: '登录',
-      loginSystem: '奇文股票',
-      ruleForm: {
+      loginForm: {
         userName: '',
         password: ''
       },
-      rules: {
-        userName: [
-          { required: true, message: '请输入手机号', trigger: 'blur' }
-        ],
+      loginFormRules: {
+        userName: [{ required: true, message: '请输入手机号', trigger: 'blur' }],
         password: [
           { required: true, message: '请输入密码', trigger: 'blur' },
-          { min: 5, max: 20, message: '长度在 5 到 20 个字符', trigger: 'blur' }
+          {
+            min: 5,
+            max: 20,
+            message: '长度在 5 到 20 个字符',
+            trigger: 'blur'
+          }
         ]
       },
       isPassing: false,
@@ -102,22 +86,16 @@ export default {
   computed: {
     url() {
       let _url = this.$route.query.Rurl //获取路由前置守卫中next函数的参数，即登录后要去的页面
-      if (_url) {
-        //若登录之前有页面，则登录后仍然进入该页面
-        return _url
-      } else {
-        //若登录之前无页面，则登录后进入首页
-        return '/'
-      }
+      return _url ? { path: _url } : { name: 'Stock' }
     }
   },
   watch: {
     //  已验证通过时，若重新输入用户名或密码，滑动解锁恢复原样
-    'ruleForm.userName'() {
+    'loginForm.userName'() {
       this.isPassing = false
       this.$refs.dragVerifyRef.reset()
     },
-    'ruleForm.password'() {
+    'loginForm.password'() {
       this.isPassing = false
       this.$refs.dragVerifyRef.reset()
     }
@@ -131,20 +109,20 @@ export default {
         this.submitDisabled = true
       }
     },
-    //  登录按钮
+    // 登录按钮
     submitForm(formName) {
-      this.$refs[formName].validate(valid => {
+      this.$refs[formName].validate((valid) => {
         if (valid) {
-          //各项校验通过
+          // 各项校验通过
           let data = {
-            username: this.ruleForm.userName,
-            password: this.ruleForm.password
+            username: this.loginForm.userName,
+            password: this.loginForm.password
           }
-          login(data, true).then(res => {
+          login(data, true).then((res) => {
             if (res.success) {
-              this.$refs[formName].resetFields();
+              this.$refs[formName].resetFields()
               this.$store.dispatch('getUserInfo').then(() => {
-                this.$router.replace({ path: this.url })
+                this.$router.replace(this.url)
               })
             } else {
               this.$message.error('手机号或密码错误！')
@@ -178,39 +156,61 @@ export default {
 }
 </script>
 <style lang="stylus" scoped>
-.loginWrapper
-  height 550px !important
-  min-height 550px !important
-  padding-top 50px
-  .formWrapper
-    width 375px
-    margin 0 auto
-    text-align center
-    .loginTitle
-      margin-bottom 10px
-      font-weight 300
-      font-size 30px
-      color #000
-    .loginSystem
-      font-weight 300
-      color #999
-    .demo-ruleForm
-      width 100%
-      margin-top 20px
-      >>> .el-form-item__content
-        margin-left 0 !important
-      &>>> .el-input__inner
-        font-size 16px
-      .forgetPassword
-        text-align right
-        margin -22px 0 0 0
-      .loginButtonWrapper
-        .loginButton
-          width 100%
-        &>>> .el-button
-          padding 10px 90px
-          font-size 16px
-    .tip
-      width 70%
-      margin-left 86px
+.login-wrapper {
+  height: 550px !important;
+  min-height: 550px !important;
+  padding-top: 50px;
+
+  .login-form-wrapper {
+    width: 375px;
+    margin: 0 auto;
+    text-align: center;
+
+    .login-title {
+      margin-bottom: 10px;
+      font-weight: 300;
+      font-size: 30px;
+      color: #000;
+    }
+
+    .login-system {
+      font-weight: 300;
+      color: #999;
+    }
+
+    .login-form {
+      width: 100%;
+      margin-top: 20px;
+
+      >>> .el-form-item__content {
+        margin-left: 0 !important;
+      }
+
+      &>>> .el-input__inner {
+        font-size: 16px;
+      }
+
+      .forgetPassword {
+        text-align: right;
+        margin: -22px 0 0 0;
+      }
+
+      .login-btn-form-item {
+        .login-btn {
+          width: 100%;
+        }
+
+        &>>> .el-button {
+          padding: 10px 90px;
+          font-size: 16px;
+        }
+      }
+    }
+
+    .tip {
+      width: 70%;
+      margin-left: 86px;
+    }
+  }
+}
 </style>

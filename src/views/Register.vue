@@ -1,57 +1,45 @@
 <template>
-  <div class="registerWrapper" id="registerBackground">
-    <div class="formWrapper">
-      <h1 class="registerTitle">{{ registerTitle }}</h1>
-      <p class="registerSystem">{{ registerSystem }}</p>
+  <div class="register-wrapper" id="registerBackground">
+    <div class="register-form-wrapper">
+      <h1 class="register-title">注册</h1>
+      <p class="register-system">奇文股票</p>
       <el-form
-        :model="ruleForm"
-        :rules="rules"
-        ref="ruleForm"
+        class="register-form"
+        :model="registerForm"
+        :rules="registerFormRules"
+        ref="registerForm"
         label-width="100px"
-        class="demo-ruleForm"
         hide-required-asterisk
       >
         <el-form-item prop="userName">
-          <el-input
-            prefix-icon="el-icon-user"
-            v-model="ruleForm.userName"
-            placeholder="用户名"
-          ></el-input>
+          <el-input prefix-icon="el-icon-user" v-model="registerForm.userName" placeholder="用户名"></el-input>
         </el-form-item>
         <el-form-item prop="telephone">
-          <el-input
-            prefix-icon="el-icon-mobile-phone"
-            v-model="ruleForm.telephone"
-            placeholder="手机号"
-          ></el-input>
+          <el-input prefix-icon="el-icon-mobile-phone" v-model="registerForm.telephone" placeholder="手机号"></el-input>
         </el-form-item>
         <el-form-item prop="password">
           <el-input
             prefix-icon="el-icon-lock"
-            v-model="ruleForm.password"
+            v-model="registerForm.password"
             placeholder="密码"
             show-password
           ></el-input>
         </el-form-item>
-        <el-form-item style="user-select: none;">
+        <el-form-item style="user-select: none">
           <drag-verify
             ref="dragVerifyRef"
             text="请按住滑块拖动解锁"
             successText="验证通过"
             handlerIcon="el-icon-d-arrow-right"
             successIcon="el-icon-circle-check"
-            :width="375"
             handlerBg="#F5F7FA"
+            :width="375"
             :isPassing.sync="isPassing"
             @update:isPassing="updateIsPassing"
           ></drag-verify>
         </el-form-item>
-        <el-form-item class="registerButtonWrapper">
-          <el-button
-            class="registerButton"
-            type="primary"
-            :disabled="submitDisabled"
-            @click="submitForm('ruleForm')"
+        <el-form-item class="register-btn-form-item">
+          <el-button class="register-btn" type="primary" :disabled="submitDisabled" @click="submitForm('registerForm')"
             >注册</el-button
           >
         </el-form-item>
@@ -79,17 +67,13 @@ export default {
   components: { DragVerify },
   data() {
     return {
-      registerTitle: '注册',
-      registerSystem: '奇文股票',
-      ruleForm: {
+      registerForm: {
         telephone: '',
         userName: '',
         password: ''
       },
-      rules: {
-        userName: [
-          { required: true, message: '请输入用户名', trigger: 'blur' }
-        ],
+      registerFormRules: {
+        userName: [{ required: true, message: '请输入用户名', trigger: 'blur' }],
         password: [
           { required: true, message: '请输入密码', trigger: 'blur' },
           {
@@ -122,15 +106,15 @@ export default {
   },
   watch: {
     //  已验证通过时，若重新输入手机号、用户名或密码，滑动解锁恢复原样
-    'ruleForm.telephone'() {
+    'registerForm.telephone'() {
       this.isPassing = false
       this.$refs.dragVerifyRef.reset()
     },
-    'ruleForm.userName'() {
+    'registerForm.userName'() {
       this.isPassing = false
       this.$refs.dragVerifyRef.reset()
     },
-    'ruleForm.password'() {
+    'registerForm.password'() {
       this.isPassing = false
       this.$refs.dragVerifyRef.reset()
     }
@@ -146,7 +130,7 @@ export default {
     updateIsPassing(isPassing) {
       if (isPassing) {
         //  校验手机号
-        this.$refs.ruleForm.validateField('telephone', telephoneError => {
+        this.$refs.registerForm.validateField('telephone', (telephoneError) => {
           if (telephoneError) {
             this.submitDisabled = true
           } else {
@@ -159,15 +143,15 @@ export default {
     },
     //  注册按钮
     submitForm(formName) {
-      this.$refs[formName].validate(valid => {
+      this.$refs[formName].validate((valid) => {
         if (valid) {
           //  各项校验通过
           let info = {
-            telephone: this.ruleForm.telephone,
-            username: this.ruleForm.userName,
-            password: this.ruleForm.password,
+            telephone: this.registerForm.telephone,
+            username: this.registerForm.userName,
+            password: this.registerForm.password
           }
-          addUser(info).then(res => {
+          addUser(info).then((res) => {
             if (res.success == false) {
               this.$message.error(res.errorMessage)
             } else {
@@ -177,8 +161,8 @@ export default {
                 message: '注册成功！已跳转到登录页面',
                 type: 'success'
               })
-              this.$refs[formName].resetFields();
               this.$router.replace({ path: '/login' })
+              this.$refs[formName].resetFields()
             }
           })
         } else {
@@ -191,37 +175,57 @@ export default {
 }
 </script>
 <style lang="stylus" scoped>
-.registerWrapper
-  height: 500px !important
-  min-height: 500px !important
-  width: 100% !important
-  padding-top: 50px
-  .formWrapper
-    width: 375px
-    margin: 0 auto
-    text-align: center
-    .registerTitle
-      margin-bottom: 10px
-      font-weight: 300
-      font-size: 30px
-      color: #000
-    .registerSystem
-      font-weight: 300
-      color: #999
-    .demo-ruleForm
-      width: 100%
-      margin-top: 20px
-      >>> .el-form-item__content
-        margin-left: 0 !important
-      &>>> .el-input__inner
-        font-size: 16px
-      .registerButtonWrapper
-        .registerButton
-          width: 100%
-        &>>> .el-button
-          padding: 10px 90px
-          font-size: 16px
-    .tip
-      width: 70%
-      margin-left: 86px
+.register-wrapper {
+  height: 500px !important;
+  min-height: 500px !important;
+  width: 100% !important;
+  padding-top: 50px;
+
+  .register-form-wrapper {
+    width: 375px;
+    margin: 0 auto;
+    text-align: center;
+
+    .register-title {
+      margin-bottom: 10px;
+      font-weight: 300;
+      font-size: 30px;
+      color: #000;
+    }
+
+    .register-system {
+      font-weight: 300;
+      color: #999;
+    }
+
+    .register-form {
+      width: 100%;
+      margin-top: 20px;
+
+      >>> .el-form-item__content {
+        margin-left: 0 !important;
+      }
+
+      &>>> .el-input__inner {
+        font-size: 16px;
+      }
+
+      .register-btn-form-item {
+        .register-btn {
+          width: 100%;
+        }
+
+        &>>> .el-button {
+          padding: 10px 90px;
+          font-size: 16px;
+        }
+      }
+    }
+
+    .tip {
+      width: 70%;
+      margin-left: 86px;
+    }
+  }
+}
 </style>

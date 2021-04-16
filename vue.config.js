@@ -14,10 +14,10 @@ module.exports = {
         ws: true, //是否跨域
         changeOrigin: true,
         pathRewrite: {
-          '^/api':'/'
+          '^/api': '/'
         }
       }
-      
+
     }
   },
 
@@ -25,21 +25,6 @@ module.exports = {
     'style-resources-loader': {
       preProcessor: 'stylus',
       patterns: []
-    }
-  },
-
-  //  模块大小分析工具
-  chainWebpack: config => {
-    //config
-    //  .plugin('webpack-bundle-analyzer')
-    //  .use(require('webpack-bundle-analyzer').BundleAnalyzerPlugin)
-  },
-
-  //  打包配置
-  configureWebpack: {
-    externals: {
-      "vue": 'Vue',
-      "element-ui": 'Element'
     }
   }
 }

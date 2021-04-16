@@ -1,41 +1,19 @@
 <template>
-  <div class="headerWrapper">
+  <div class="header-wrapper">
+    <img class="logo" :src="logoUrl" @click="$router.push({ name: 'Home' })" />
     <el-menu :default-active="activeIndex" class="el-menu-demo" mode="horizontal" router>
-      <el-menu-item class="headerLogo" index="0" disabled>
-        <a href="https://www.qiwenshare.com/" target="_blank" style="font-size: 20px;font-weight: bold;">
-          <!-- <img class="logo" :src="logoUrl" /> -->
-          奇文股票
-        </a>
-      </el-menu-item>
-      <el-menu-item
-        class="headerItem" 
-        index="1"
-        :route="{ name: 'Stock'}"
-      >股票</el-menu-item>
-      <el-menu-item class="headerItem userDisplay right-menu-item" index="2" v-show="isLogin">
-        <el-avatar :size="34" :src="userImgUrl" fit="cover">
-          <img :src="userImgDefault" />
-        </el-avatar>
-        <span class="username-header">{{ username }}</span>
-      </el-menu-item>
-      <el-menu-item
-        class="headerItem exit right-menu-item"
-        v-show="isLogin"
-        index="3"
-        @click="exitButton()"
-      >退出</el-menu-item>
-      <el-menu-item
-        class="headerItem login right-menu-item"
-        v-show="!isLogin"
-        index="4"
-        :route="{ name: 'Login' }"
-      >登录</el-menu-item>
-      <el-menu-item
-        class="headerItem register right-menu-item"
-        v-show="!isLogin"
-        index="5"
-        :route="{ name: 'Register' }"
-      >注册</el-menu-item>
+      <!-- <el-menu-item index="Home" :route="{ name: 'Home' }">首页</el-menu-item> -->
+      <el-menu-item index="Stock" :route="{ name: 'Stock', query: { fileType: 0, filePath: '/' } }">网盘</el-menu-item>
+      <!-- <div class="el-menu-item"><a href="https://www.qiwenshare.com/topic/detail/6/24" target="_blank">帮助文档</a></div> -->
+      <!-- 为了和其他菜单样式保持一致，请一定要添加类名 el-menu-item -->
+      <div class="el-menu-item exit" @click="exitButton()" v-show="isLogin">
+        退出
+      </div>
+      <div class="el-menu-item username" v-show="isLogin"><i class="el-icon-user-solid"></i>{{ username }}</div>
+      <el-menu-item class="login" index="Login" :route="{ name: 'Login' }" v-show="!isLogin">登录</el-menu-item>
+      <el-menu-item class="register" index="Register" :route="{ name: 'Register' }" v-show="!isLogin"
+        >注册</el-menu-item
+      >
     </el-menu>
   </div>
 </template>
@@ -48,38 +26,26 @@ export default {
   name: 'Header',
   data() {
     return {
-      logoUrl: require('@/assets/images/common/logo_header.png'),
-      userImgDefault: require('@/assets/images/settings/userImg.png')
+      logoUrl: require('@/assets/images/common/logo_header.png')
     }
   },
   computed: {
-    ...mapGetters(['isLogin','userImgUrl','username']),
-    activeIndex: {
-      get() {
-        let routerName = this.$route.name
-        const ROUTERMAP = {
-          File: '1',
-          Login: '4',
-          Register: '5'
-        }
-        return ROUTERMAP[routerName]
-      },
-      set() {
-        return '1'
-      }
+    ...mapGetters(['isLogin', 'username']),
+    // 当前激活菜单的 index
+    activeIndex() {
+      return this.$route.name || 'Home' //  获取当前路由名称
     }
   },
   methods: {
-    //  退出登录
+    /**
+     * 退出登录
+     * @description 清除 cookie 存放的 token 和 viewDomain 并跳转到登录页面
+     */
     exitButton() {
       logout().then(res => {
         if (res.success) {
           this.$message.success(res.data)
           this.$store.dispatch('getUserInfo').then(() => {
-            sessionStorage.removeItem('operaColumnExpand')
-            sessionStorage.removeItem('isFolder')
-            sessionStorage.removeItem('selectedColumnList')
-            sessionStorage.removeItem('imageModel')
             this.$router.push({ path: '/login' })
           })
         } else {
@@ -92,42 +58,45 @@ export default {
 </script>
 
 <style lang="stylus" scoped>
-@import '~@/assets/styles/varibles.styl'
-.headerWrapper
-  width 100%
-  padding 0 20px
-  box-shadow $tabBoxShadow
-  >>> .el-menu--horizontal
-    .el-menu-item:not(.is-disabled):hover
-      border-bottom-color $Primary !important
-      background $tabBackColor
-  .el-menu-demo
-    display flex
-    position relative
-    .headerLogo
-      color $Primary
-      font-size 60px
-      opacity 1
-      cursor default
-      a
-        display block
-      .logo
-        height 40px
-        vertical-align baseline
-    .right-menu-item
-      position absolute
-    .userDisplay
-      right 70px
-      width 180px
-      .username-header
-        margin-left 6px
-        min-width 60px
-        display inline-block
-        text-align center
-    .exit
-      right 0
-    .login
-      right 70px
-    .register
-      right 0px
+@import '~@/assets/styles/varibles.styl';
+
+.header-wrapper {
+  width: 100%;
+  padding: 0 20px;
+  box-shadow: $tabBoxShadow;
+  display: flex;
+
+  .logo {
+    margin: 14px 24px 0 24px;
+    display: inline-block;
+    height: 40px;
+    cursor: pointer;
+  }
+
+  >>> .el-menu--horizontal {
+    .el-menu-item:not(.is-disabled):hover {
+      border-bottom-color: $Primary !important;
+      background: $tabBackColor;
+    }
+  }
+
+  .el-menu-demo {
+    flex: 1;
+
+    .headerLogo {
+      color: $Primary;
+      font-size: 60px;
+      opacity: 1;
+      cursor: default;
+
+      a {
+        display: block;
+      }
+    }
+
+    .login, .register, .username, .exit {
+      float: right;
+    }
+  }
+}
 </style>

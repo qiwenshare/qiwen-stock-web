@@ -12,6 +12,7 @@ import {
   Radio,
   RadioGroup,
   RadioButton,
+  Switch,
   Select,
   Option,
   OptionGroup,
@@ -19,29 +20,41 @@ import {
   ButtonGroup,
   Table,
   TableColumn,
+  DatePicker,
+  Popover,
   Tooltip,
   Form,
   FormItem,
+  Tabs,
+  TabPane,
+  Tag,
   Icon,
+  Row,
+  Col,
   Upload,
+  Badge,
+  Card,
+  Carousel,
+  CarouselItem,
+  Link,
+  Divider,
   Image,
   Backtop,
+  PageHeader,
   MessageBox,
   Message,
   Notification,
   Avatar,
-  Container,
-  Header,
-  Aside,
-  Main,
-  Footer,
+  Drawer,
+  Popconfirm,
   Breadcrumb,
   BreadcrumbItem,
-  Loading,
-  Timeline,
-  TimelineItem,
+  Collapse,
+  CollapseItem,
   Alert,
-  Tree
+  Loading,
+  Pagination,
+  Progress
 } from "element-ui";
 const element = {
   install: function (Vue) {
@@ -57,6 +70,7 @@ const element = {
     Vue.use(Radio);
     Vue.use(RadioGroup);
     Vue.use(RadioButton);
+    Vue.use(Switch);
     Vue.use(Select);
     Vue.use(Option);
     Vue.use(OptionGroup);
@@ -64,28 +78,41 @@ const element = {
     Vue.use(ButtonGroup);
     Vue.use(Table);
     Vue.use(TableColumn);
+    Vue.use(DatePicker);
+    Vue.use(Popover);
     Vue.use(Tooltip);
     Vue.use(Form);
     Vue.use(FormItem);
+    Vue.use(Tabs);
+    Vue.use(TabPane);
+    Vue.use(Tag);
     Vue.use(Icon);
+    Vue.use(Row);
+    Vue.use(Col);
     Vue.use(Upload);
+    Vue.use(Badge);
+    Vue.use(Card);
+    Vue.use(Carousel);
+    Vue.use(CarouselItem);
+    Vue.use(Link);
+    Vue.use(Divider);
     Vue.use(Image);
     Vue.use(Backtop);
+    Vue.use(PageHeader);
     Vue.use(Avatar);
-    Vue.use(Container);
-    Vue.use(Header);
-    Vue.use(Aside);
-    Vue.use(Main);
-    Vue.use(Footer);
+    Vue.use(Drawer);
+    Vue.use(Popconfirm);
     Vue.use(Breadcrumb);
     Vue.use(BreadcrumbItem);
-    Vue.use(Loading.directive);
-    Vue.use(Timeline);
-    Vue.use(TimelineItem);
+    Vue.use(Collapse);
+    Vue.use(CollapseItem);
     Vue.use(Alert);
-    Vue.use(Tree);
+    Vue.use(Pagination);
+    Vue.use(Progress);
+    Vue.use(Loading.directive);
 
     Vue.prototype.$loading = Loading.service;
+
     Vue.prototype.$msgbox = MessageBox;
     Vue.prototype.$alert = MessageBox.alert;
     Vue.prototype.$confirm = MessageBox.confirm;

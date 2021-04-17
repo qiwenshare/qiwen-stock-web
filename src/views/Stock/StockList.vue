@@ -1,37 +1,27 @@
 <template>
   <div class="stock-wrapper">
-    <div class="gtja-section">
-      <div class="pure-g">
-        <div class="pure-u-1-5" v-for="(item, index) of shStock" :key="index">
-          <div class="index" id="szzs-panel">
-            <h2>{{ item[1] }}</h2>
-
-            <div v-if="item[2] - item[6] > 0" class="stock-up">
-              <span>{{ item[2] }}</span>
-              <p>
-                <i v-if="item[2] - item[6] > 0" class="el-icon-top"></i>
-                <i v-if="item[2] - item[6] < 0" class="el-icon-bottom"></i>
-                {{ (item[2] - item[6]).toFixed(2) }}
-                <i v-if="item[2] - item[6] > 0" class="el-icon-top"></i>
-                <i v-if="item[2] - item[6] < 0" class="el-icon-bottom"></i>
-                {{ item[3] }}
-              </p>
-            </div>
-            <div v-if="item[2] - item[6] < 0" class="stock-down">
-              <span>{{ item[2] }}</span>
-              <p>
-                <i v-if="item[2] - item[6] > 0" class="el-icon-top"></i>
-                <i v-if="item[2] - item[6] < 0" class="el-icon-bottom"></i>
-                {{ (item[2] - item[6]).toFixed(2) }}
-                <i v-if="item[2] - item[6] > 0" class="el-icon-top"></i>
-                <i v-if="item[2] - item[6] < 0" class="el-icon-bottom"></i>
-                {{ item[3] }}
-              </p>
-            </div>
-          </div>
+    <!-- 指数看板 -->
+    <ul class="board-list">
+      <li
+        class="board-item"
+        v-for="(item, index) in stockBoardData"
+        :key="index"
+        :class="item.range >= 0 ? 'red' : 'green'"
+      >
+        <div class="name">{{ item.name }}</div>
+        <div class="value">{{ item.value }}</div>
+        <div class="bottom">
+          <span class="left">
+            <i :class="item.range >= 0 ? 'el-icon-top' : 'el-icon-bottom'"></i>
+            {{ item.range }}
+          </span>
+          <span class="right">
+            <i :class="item.rate >= 0 ? 'el-icon-top' : 'el-icon-bottom'"></i>
+            {{ item.rate }}
+          </span>
         </div>
-      </div>
-    </div>
+      </li>
+    </ul>
     <div v-if="false">
       <el-button @click="drawer = true" type="primary" style="margin-left: 16px">操作</el-button>
       <el-drawer :visible.sync="drawer" :direction="direction">
@@ -145,67 +135,74 @@
     <el-table class="stock-table" :data="stockTableData" v-loading="loading" stripe>
       <el-table-column label="股票编号" width="110">
         <template slot-scope="scope">
-          <span class="stock-num blue" @click="handleEdit(scope.$index, scope.row)">{{ scope.row.stocknum }}</span>
+          <router-link
+            class="stock-num blue"
+            tag="a"
+            :to="{
+              name: 'StockDetail',
+              params: { stocknum: scope.row.stocknum }
+            }"
+            target="_blank"
+            >{{ scope.row.stocknum }}</router-link
+          >
         </template>
       </el-table-column>
       <el-table-column label="股票名称" width="110">
         <template slot-scope="scope">
-          <span class="stock-name blue" @click="handleEdit(scope.$index, scope.row)">{{ scope.row.stockname }}</span>
+          <router-link
+            class="stock-name blue"
+            tag="a"
+            :to="{
+              name: 'StockDetail',
+              params: { stocknum: scope.row.stocknum }
+            }"
+            target="_blank"
+            >{{ scope.row.stockname }}</router-link
+          >
         </template>
       </el-table-column>
       <el-table-column label="最新价" width="90" align="center">
         <template slot-scope="scope">
-          <span class="stock-close" :class="doubleToPercent(scope.row.updownrange).includes('-') ? 'green' : 'red'">{{ scope.row.close }}</span>
+          <span class="stock-close" :class="scope.row.updownrange.includes('-') ? 'green' : 'red'">{{
+            scope.row.close
+          }}</span>
         </template>
       </el-table-column>
       <el-table-column label="单日涨跌幅" width="94" align="center">
         <template slot-scope="scope">
-          <span class="stock-updownrange" :class="doubleToPercent(scope.row.updownrange).includes('-') ? 'green' : 'red'">{{ doubleToPercent(scope.row.updownrange) }}</span>
+          <span class="stock-updownrange" :class="scope.row.updownrange.includes('-') ? 'green' : 'red'">{{
+            scope.row.updownrange
+          }}</span>
         </template>
       </el-table-column>
       <el-table-column label="3日涨跌幅" width="94" align="center">
         <template slot-scope="scope">
-          <span class="stock-updownrange3" :class="doubleToPercent(scope.row.updownrange3).includes('-') ? 'green' : 'red'">{{ doubleToPercent(scope.row.updownrange3) }}</span>
+          <span class="stock-updownrange3" :class="scope.row.updownrange3.includes('-') ? 'green' : 'red'">{{
+            scope.row.updownrange3
+          }}</span>
         </template>
       </el-table-column>
       <el-table-column label="5日涨跌幅" width="94" align="center">
         <template slot-scope="scope">
-          <span class="stock-updownrange5" :class="doubleToPercent(scope.row.updownrange5).includes('-') ? 'green' : 'red'">{{ doubleToPercent(scope.row.updownrange5) }}</span>
+          <span class="stock-updownrange5" :class="scope.row.updownrange5.includes('-') ? 'green' : 'red'">{{
+            scope.row.updownrange5
+          }}</span>
         </template>
       </el-table-column>
       <el-table-column label="涨跌额" width="90" align="center">
         <template slot-scope="scope">
-          <span class="stock-updownprices" :class="scope.row.updownprices.toFixed(2).includes('-') ? 'green' : 'red'">{{ scope.row.updownprices.toFixed(2) }}</span>
+          <span class="stock-updownprices" :class="scope.row.updownprices.includes('-') ? 'green' : 'red'">{{
+            scope.row.updownprices
+          }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="换手率" width="90" align="center">
-        <template slot-scope="scope">
-          <span class="stock-turnoverrate">{{ doubleToPercent(scope.row.turnoverrate) }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column label="振幅" width="90" align="center">
-        <template slot-scope="scope">
-          <span class="stock-amplitude">{{ doubleToPercent(scope.row.amplitude) }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column label="上市日期" width="120" prop="lISTING_DATE" align="center"></el-table-column>
-      <el-table-column label="流通股本" align="center">
-        <template slot-scope="scope">
-          {{ parseInt(scope.row.totalFlowShares) }}
-        </template>
-      </el-table-column>
-      <el-table-column label="总股本" align="center">
-        <template slot-scope="scope">
-          {{ parseInt(scope.row.totalShares) }}
-        </template>
-      </el-table-column>
-      <!-- <el-table-column label="操作" width="60" fixed="right">
-        <template slot-scope="scope">
-          <el-button @click="handleEdit(scope.$index, scope.row)" type="text" size="small">查看</el-button>
-        </template>
-      </el-table-column> -->
+      <el-table-column label="换手率" prop="turnoverrate" width="90" align="center"> </el-table-column>
+      <el-table-column label="振幅" prop="amplitude" width="90" align="center"></el-table-column>
+      <el-table-column label="上市日期" prop="lISTING_DATE" width="120" align="center"></el-table-column>
+      <el-table-column label="流通股本" prop="totalFlowShares" align="center"></el-table-column>
+      <el-table-column label="总股本" prop="totalShares" align="center"></el-table-column>
     </el-table>
-    <el-pagination 
+    <el-pagination
       class="stock-pagination"
       :current-page="pageData.page"
       :page-size="pageData.limit"
@@ -213,7 +210,8 @@
       :page-sizes="[10, 20, 50, 100]"
       layout="sizes, total, prev, pager, next"
       @current-change="handleCurrentChange"
-      @size-change="handleSizeChange"></el-pagination>
+      @size-change="handleSizeChange"
+    ></el-pagination>
   </div>
 </template>
 
@@ -233,18 +231,18 @@ export default {
   name: 'StockList',
   data() {
     return {
+      stockBoardData: [], //  指数看板数据
       // 表格树
       stockTableData: [],
       // 分页组件数据
       pageData: {
-        page: 1,  //  页码
-        limit: 20,  //  页大小
+        page: 1, //  页码
+        limit: 20, //  页大小
         total: 0
       },
       loading: false,
       drawer: false,
       direction: 'rtl',
-      shStock: [],
       percentageTimeData: 0,
       percentageDayData: 0,
       percentageWeekData: 0,
@@ -256,8 +254,8 @@ export default {
     }
   },
   created() {
+    this.getStockBoardData()
     this.getStockTableData()
-    this.getShStock()
     this.initSocket()
   },
   methods: {
@@ -329,10 +327,19 @@ export default {
           Console.log('Info: WebSocket closed.');
       };*/
     },
-    getShStock() {
+    /**
+     * 获取指数看板数据
+     */
+    getStockBoardData() {
       getShStock().then((res) => {
-        this.shStock = res.list
-        console.log(res)
+        this.stockBoardData = res.list.map((item) => {
+          return {
+            name: item[1],
+            value: item[2],
+            range: Number((item[2] - item[6]).toFixed(2)),
+            rate: item[3]
+          }
+        })
       })
     },
     /**
@@ -346,12 +353,33 @@ export default {
       }).then((res) => {
         this.loading = false
         if (res.success) {
-          this.stockTableData = res.data
+          this.stockTableData = res.data.map((item) => {
+            return {
+              ...item,
+              updownrange: this.doubleToPercent(item.updownrange),
+              updownrange3: this.doubleToPercent(item.updownrange3),
+              updownrange5: this.doubleToPercent(item.updownrange5),
+              updownprices: item.updownprices.toFixed(2),
+              turnoverrate: this.doubleToPercent(item.turnoverrate),
+              amplitude: this.doubleToPercent(item.amplitude),
+              totalFlowShares: parseInt(item.totalFlowShares),
+              totalShares: parseInt(item.totalShares)
+            }
+          })
           this.pageData.total = res.count
         } else {
           this.$message.error(res.errorMessage)
         }
       })
+    },
+    /**
+     * 数值转换为百分比
+     * @param {number} count 数值
+     */
+    doubleToPercent(count) {
+      let resultCount = (count * 100).toFixed(2)
+      let resultStr = resultCount + '%'
+      return resultStr
     },
     /**
      * 表格数据获取相关事件 | 分页组件 | 当前页码改变
@@ -421,20 +449,8 @@ export default {
         }
       })
     },
-    handleEdit(index, row) {
-      this.$router.push({
-        path: '/stock/detail/' + row.stocknum
-      })
-      // console.log(row);
-      // console.log(index);
-    },
     handleDelete(index, row) {
       console.log(index, row)
-    },
-    doubleToPercent(count) {
-      var resultCount = (count * 100).toFixed(2)
-      var resultStr = resultCount + '%'
-      return resultStr
     }
   }
 }
@@ -446,134 +462,107 @@ export default {
 
 .stock-wrapper {
   display: block !important;
-  padding 16px 0 24px 0
+  padding: 16px 0 24px 0;
 
-  .gtja-section {
-    margin-bottom 16px
-    width: 100%;
-    height: 222px;
+  .board-list {
+    margin-bottom: 16px;
     background: $ThemeColor;
+    padding: 48px 0;
+    display: flex;
+    justify-content: space-between;
 
-    .pure-g {
-      text-rendering: optimizespeed;
-      display: flex;
-      display: -webkit-flex;
-      -webkit-flex-flow: row wrap;
-      display: -ms-flexbox;
-      -ms-flex-flow: row wrap;
+    .board-item {
+      width: 25%;
+      text-align: center;
 
-      .pure-u-1-5 {
-        width: 20%;
+      .name {
+        margin-bottom: 8px;
+        height: 24px;
+        line-height: 24px;
+        font-size: 18px;
+        color: #fff;
+        font-weight: 300;
+      }
 
-        .index {
-          color: #fff;
-          text-align: center;
-          padding-top: 55px;
+      .value {
+        margin-bottom: 8px;
+        height: 48px;
+        line-height: 48px;
+        font-size: 36px;
+      }
 
-          h2 {
-            font-size: 18px;
-            font-weight: lighter;
-            margin-bottom: 8px;
-          }
+      .bottom {
+        font-size: 14px;
+      }
+    }
 
-          .stock-up {
-            color: #ff5c5c;
+    .board-item.red {
+      .value, .bottom {
+        color: $Danger;
+      }
+    }
 
-            span {
-              display: block;
-              font-size: 36px;
-              margin-bottom: 10px;
-            }
-
-            p {
-              font-size: 14px;
-              margin-bottom: 10px;
-
-              .gtja-iconfont {
-                font-family: 'gtja-iconfont' !important;
-                font-size: 1.6rem;
-                font-style: normal;
-                -webkit-font-smoothing: antialiased;
-                -webkit-text-stroke-width: 0.2px;
-                -moz-osx-font-smoothing: grayscale;
-              }
-            }
-          }
-
-          .stock-down {
-            color: #4f9f3f;
-
-            span {
-              display: block;
-              font-size: 36px;
-              margin-bottom: 10px;
-            }
-
-            p {
-              font-size: 14px;
-              margin-bottom: 10px;
-
-              .gtja-iconfont {
-                font-family: 'gtja-iconfont' !important;
-                font-size: 1.6rem;
-                font-style: normal;
-                -webkit-font-smoothing: antialiased;
-                -webkit-text-stroke-width: 0.2px;
-                -moz-osx-font-smoothing: grayscale;
-              }
-            }
-          }
-        }
+    .board-item.green {
+      .value, .bottom {
+        color: $Success;
       }
     }
   }
 
   .stock-table {
-    position sticky
-    top 0
-    max-height calc(100vh - 64px)
-    width: 100%
+    position: sticky;
+    top: 0;
+    max-height: calc(100vh - 64px);
+    width: 100%;
+
     >>> td {
       padding: 8px 0;
+
       .blue {
-        color $Primary 
-        cursor pointer
+        color: $Primary;
+        cursor: pointer;
+
         &:hover {
-          color $ThemeColor
-        } 
+          color: $ThemeColor;
+        }
       }
+
       .red {
-        color $Danger 
-        cursor pointer
+        color: $Danger;
+        cursor: pointer;
+
         &:hover {
-          color $ThemeColor
-        } 
+          color: $ThemeColor;
+        }
       }
+
       .green {
-        color $Success
-        cursor pointer
+        color: $Success;
+        cursor: pointer;
+
         &:hover {
-          color $ThemeColor
-        } 
+          color: $ThemeColor;
+        }
       }
     }
+
     >>> .el-table__header-wrapper {
       th {
         background: $tabBackColor;
         padding: 8px 0;
-        color $PrimaryText
+        color: $PrimaryText;
       }
     }
 
     >>> .el-table__body-wrapper {
-      max-height calc(100vh - 104px)
+      max-height: calc(100vh - 104px);
       overflow-y: auto;
       setScrollbar(8px);
     }
   }
 
   .stock-pagination {
-    margin-top 8px
+    margin-top: 8px;
     text-align: center;
   }
 }

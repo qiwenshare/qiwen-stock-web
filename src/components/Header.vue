@@ -3,7 +3,7 @@
     <img class="logo" :src="logoUrl" @click="$router.push({ name: 'Home' })" />
     <el-menu :default-active="activeIndex" class="el-menu-demo" mode="horizontal" router>
       <!-- <el-menu-item index="Home" :route="{ name: 'Home' }">首页</el-menu-item> -->
-      <el-menu-item index="Stock" :route="{ name: 'Stock', query: { fileType: 0, filePath: '/' } }">网盘</el-menu-item>
+      <el-menu-item index="Stock" :route="{ name: 'Stock' }">股票</el-menu-item>
       <!-- <div class="el-menu-item"><a href="https://www.qiwenshare.com/topic/detail/6/24" target="_blank">帮助文档</a></div> -->
       <!-- 为了和其他菜单样式保持一致，请一定要添加类名 el-menu-item -->
       <div class="el-menu-item exit" @click="exitButton()" v-show="isLogin">
@@ -39,10 +39,9 @@ export default {
   methods: {
     /**
      * 退出登录
-     * @description 清除 cookie 存放的 token 和 viewDomain 并跳转到登录页面
      */
     exitButton() {
-      logout().then(res => {
+      logout().then((res) => {
         if (res.success) {
           this.$message.success(res.data)
           this.$store.dispatch('getUserInfo').then(() => {

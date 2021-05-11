@@ -22,10 +22,14 @@
         </div>
       </li>
     </ul>
-    <div v-if="false">
-      <el-button @click="drawer = true" type="primary" style="margin-left: 16px">操作</el-button>
-      <el-drawer :visible.sync="drawer" :direction="direction">
-        <div class="drawerSwapper" style="margin: 10px">
+    <div class="operate-box">
+      <el-button class="operate-btn" @click="operateDialogStatus = true" type="primary" size="medium">操作</el-button>
+      <el-dialog
+        title="操作"
+        width="70%"
+        :visible.sync="operateDialogStatus"
+      >
+        <div>
           <el-button round size="mini" @click="updateStockList()" type="primary" style="margin-left: 16px"
             >更新股票列表</el-button
           >
@@ -130,7 +134,10 @@
           <div>{{ monthTaskInfo }}</div>
           <el-progress :text-inside="true" :percentage="percentageMonthData"></el-progress>
         </div>
-      </el-drawer>
+        <span slot="footer" class="dialog-footer">
+          <el-button @click="operateDialogStatus = false">关闭</el-button>
+        </span>
+      </el-dialog>
     </div>
     <el-table class="stock-table" :data="stockTableData" v-loading="loading" stripe>
       <el-table-column label="股票编号" width="110">
@@ -241,8 +248,7 @@ export default {
         total: 0
       },
       loading: false,
-      drawer: false,
-      direction: 'rtl',
+      operateDialogStatus: false,
       percentageTimeData: 0,
       percentageDayData: 0,
       percentageWeekData: 0,
@@ -506,6 +512,13 @@ export default {
       .value, .bottom {
         color: $Success;
       }
+    }
+  }
+
+  .operate-box {
+    .operate-btn {
+      margin-bottom: 16px;
+      float: right;
     }
   }
 

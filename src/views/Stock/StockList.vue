@@ -270,9 +270,9 @@ export default {
       var connectUrl = ''
 
       if (window.location.protocol == 'http:') {
-        connectUrl = 'ws://localhost:8080/websocket/' + 'stock'
+        connectUrl = 'ws://localhost:8764/websocket/' + 'stock'
       } else {
-        connectUrl = 'wss://localhost:8080/websocket/' + 'stock'
+        connectUrl = 'wss://localhost:8764/websocket/' + 'stock'
       }
 
       if ('WebSocket' in window) {

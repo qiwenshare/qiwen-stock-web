@@ -268,7 +268,7 @@ export default {
         if (res.success) {
           this.stockList = res.data
         } else {
-          this.$message.error(res.errorMessage)
+          this.$message.error(res.message)
         }
       })
     },

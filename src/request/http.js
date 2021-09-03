@@ -1,9 +1,10 @@
-import axios from "axios"
-import router from '@/router/router.js'
+import axios from 'axios'
+import globalFunction from '@/globalFunction.js'
+import router from '@/router/router'
 import { MessageBox } from 'element-ui';
 
 // 登录提醒
-const loginTip = function () {
+const loginTip = function() {
   MessageBox.alert('您尚未登录，请先登录', '操作提示', {
     confirmButtonText: '确定',
     callback: () => {
@@ -16,26 +17,41 @@ const loginTip = function () {
 }
 
 // 请求超时时间
-axios.defaults.timeout = 10000 * 5;
+axios.defaults.timeout = 10000 * 5
 
-// 请求基础URL
-axios.defaults.baseURL = '/api';
+// 请求基础 URL
+axios.defaults.baseURL = '/api'
 
-// post请求头
-axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded';
+// POST 请求头
+axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded'
+
+// 请求携带cookie
+axios.defaults.withCredentials = true
+
+// 请求拦截器
+axios.interceptors.request.use(
+  (config) => {
+    config.headers['token'] = globalFunction.getCookies('token')
+    return config
+  },
+  (error) => {
+    console.log(error)
+    return Promise.reject(error)
+  }
+)
 
 // 响应拦截器
 axios.interceptors.response.use(
-  response => {
+  (response) => {
     if (response.status === 200) {
-      return Promise.resolve(response);
+      return Promise.resolve(response)
     }
   },
-  // 服务器状态码不是200的情况 
-  error => {
+  // 服务器状态码不是200的情况
+  (error) => {
     if (error.response.status) {
       console.log(error.response)
-      switch (error.response.status) {
+      switch(error.response.status) {
         case 401:
           loginTip()
           break
@@ -44,7 +60,7 @@ axios.interceptors.response.use(
       }
     }
   }
-);
+)
 
 /**
  * 封装 get方法 对应 GET 请求

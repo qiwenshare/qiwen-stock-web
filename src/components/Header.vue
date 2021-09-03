@@ -11,7 +11,12 @@
       </div>
       <div class="el-menu-item username" v-show="isLogin"><i class="el-icon-user-solid"></i>{{ username }}</div>
       <el-menu-item class="login" index="Login" :route="{ name: 'Login' }" v-show="!isLogin">登录</el-menu-item>
-      <el-menu-item class="register" index="Register" :route="{ name: 'Register' }" v-show="!isLogin"
+      <!-- 生产环境 -->
+      <el-menu-item class="register" v-if="isProductEnv" v-show="!isLogin">
+        <a href="https://www.qiwenshare.com/register" target="_blank">注册</a>
+      </el-menu-item>
+      <!-- 开发环境 -->
+      <el-menu-item class="register" v-else v-show="!isLogin" index="Register" :route="{ name: 'Register' }"
         >注册</el-menu-item
       >
     </el-menu>
@@ -19,7 +24,6 @@
 </template>
 
 <script>
-import { logout } from '@/request/user.js'
 import { mapGetters } from 'vuex'
 
 export default {
@@ -34,22 +38,21 @@ export default {
     // 当前激活菜单的 index
     activeIndex() {
       return this.$route.name || 'Home' //  获取当前路由名称
+    },
+    isProductEnv() {
+      return process.env.NODE_ENV !== 'development' && location.origin === 'https://pan.qiwenshare.com'
     }
   },
   methods: {
     /**
      * 退出登录
+     * @description 清除 cookie 存放的 token  并跳转到登录页面
      */
     exitButton() {
-      logout().then((res) => {
-        if (res.success) {
-          this.$message.success(res.data)
-          this.$store.dispatch('getUserInfo').then(() => {
-            this.$router.push({ path: '/login' })
-          })
-        } else {
-          this.$message.error(res.errorMessage)
-        }
+      this.$message.success('退出登录成功！')
+      this.$store.dispatch('getUserInfo').then(() => {
+        this.removeCookies('token')
+        this.$router.push({ path: '/login' })
       })
     }
   }
@@ -77,6 +80,14 @@ export default {
       border-bottom-color: $Primary !important;
       background: $tabBackColor;
     }
+
+    .external-link {
+      padding: 0;
+      a {
+        display: block;
+        padding: 0 20px;
+      }
+    }
   }
 
   .el-menu-demo {
@@ -99,3 +110,4 @@ export default {
   }
 }
 </style>
+

@@ -270,9 +270,9 @@ export default {
       var connectUrl = ''
 
       if (window.location.protocol == 'http:') {
-        connectUrl = 'ws://121.89.222.103:8764/websocket/' + 'stock'
+        connectUrl = 'ws://127.0.0.1:8080/websocket/' + 'stock'
       } else {
-        connectUrl = 'wss://121.89.222.103:8764/websocket/' + 'stock'
+        connectUrl = 'wss://127.0.0.1:8080/websocket/' + 'stock'
       }
 
       if ('WebSocket' in window) {
@@ -374,7 +374,7 @@ export default {
           })
           this.pageData.total = res.count
         } else {
-          this.$message.error(res.errorMessage)
+          this.$message.error(res.message)
         }
       })
     },
@@ -406,7 +406,7 @@ export default {
         if (res.success) {
           alert('成功')
         } else {
-          this.$message.error(res.errorMessage)
+          this.$message.error(res.message)
         }
       })
     },
@@ -415,7 +415,7 @@ export default {
         if (res.success) {
           alert('成功')
         } else {
-          this.$message.error(res.errorMessage)
+          this.$message.error(res.message)
         }
       })
     },
@@ -424,7 +424,7 @@ export default {
         if (res.success) {
           alert('成功')
         } else {
-          this.$message.error(res.errorMessage)
+          this.$message.error(res.message)
         }
       })
     },
@@ -433,7 +433,7 @@ export default {
         if (res.success) {
           alert('成功')
         } else {
-          this.$message.error(res.errorMessage)
+          this.$message.error(res.message)
         }
       })
     },
@@ -442,7 +442,7 @@ export default {
         if (res.success) {
           alert('成功')
         } else {
-          this.$message.error(res.errorMessage)
+          this.$message.error(res.message)
         }
       })
     },
@@ -451,7 +451,7 @@ export default {
         if (res.success) {
           alert('已停止')
         } else {
-          this.$message.error(res.errorMessage)
+          this.$message.error(res.message)
         }
       })
     },

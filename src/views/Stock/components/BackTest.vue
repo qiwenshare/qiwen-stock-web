@@ -60,7 +60,7 @@ export default {
           alert('成功')
           this.selectReplayList()
         } else {
-          this.$message.error(res.errorMessage)
+          this.$message.error(res.message)
         }
       })
     },
@@ -81,7 +81,7 @@ export default {
           var totalcount = successcount + failcount;
           this.replaySuccessRate = (successcount / totalcount * 100).toFixed(0) + "%";
         } else {
-          this.$message.error(res.errorMessage)
+          this.$message.error(res.message)
         }
       })
     }

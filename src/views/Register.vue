@@ -1,29 +1,25 @@
 <template>
   <div class="register-wrapper" id="registerBackground">
-    <div class="register-form-wrapper">
+    <div class="form-wrapper">
       <h1 class="register-title">注册</h1>
       <p class="register-system">奇文股票</p>
+      <!-- 注册表单 -->
       <el-form
         class="register-form"
+        ref="registerForm"
         :model="registerForm"
         :rules="registerFormRules"
-        ref="registerForm"
         label-width="100px"
         hide-required-asterisk
       >
-        <el-form-item prop="userName">
-          <el-input prefix-icon="el-icon-user" v-model="registerForm.userName" placeholder="用户名"></el-input>
+        <el-form-item prop="username">
+          <el-input prefix-icon="el-icon-user" v-model="registerForm.username" placeholder="用户名"></el-input>
         </el-form-item>
         <el-form-item prop="telephone">
           <el-input prefix-icon="el-icon-mobile-phone" v-model="registerForm.telephone" placeholder="手机号"></el-input>
         </el-form-item>
         <el-form-item prop="password">
-          <el-input
-            prefix-icon="el-icon-lock"
-            v-model="registerForm.password"
-            placeholder="密码"
-            show-password
-          ></el-input>
+          <el-input prefix-icon="el-icon-lock" v-model="registerForm.password" placeholder="密码" show-password></el-input>
         </el-form-item>
         <el-form-item style="user-select: none">
           <drag-verify
@@ -38,8 +34,8 @@
             @update:isPassing="updateIsPassing"
           ></drag-verify>
         </el-form-item>
-        <el-form-item class="register-btn-form-item">
-          <el-button class="register-btn" type="primary" :disabled="submitDisabled" @click="submitForm('registerForm')"
+        <el-form-item class="registerButtonWrapper">
+          <el-button class="registerButton" type="primary" :disabled="submitDisabled" @click="submitForm('registerForm')"
             >注册</el-button
           >
         </el-form-item>
@@ -50,7 +46,7 @@
 
 <script>
 import CanvasNest from 'canvas-nest.js'
-import DragVerify from '@/components/DragVerify.vue'
+import DragVerify from '@/components/common/DragVerify.vue'  //  引入滑动解锁组件
 import { addUser } from '@/request/user.js'
 
 // 配置
@@ -67,13 +63,15 @@ export default {
   components: { DragVerify },
   data() {
     return {
+      // 注册表单
       registerForm: {
         telephone: '',
-        userName: '',
+        username: '',
         password: ''
       },
+      // 注册表单校验规则
       registerFormRules: {
-        userName: [{ required: true, message: '请输入用户名', trigger: 'blur' }],
+        username: [{ required: true, message: '请输入用户名', trigger: 'blur' }],
         password: [
           { required: true, message: '请输入密码', trigger: 'blur' },
           {
@@ -88,29 +86,23 @@ export default {
           { min: 11, max: 11, message: '请输入11位手机号', trigger: 'blur' }
         ]
       },
-      isPassing: false,
-      submitDisabled: true
+      isPassing: false, //  滑动解锁是否验证通过
+      submitDisabled: true  //  登录按钮是否禁用
     }
   },
   computed: {
     url() {
-      let _url = this.$route.query.Rurl //获取路由前置守卫中next函数的参数，即登录后要去的页面
-      if (_url) {
-        //若登录之前有页面，则登录后仍然进入该页面
-        return _url
-      } else {
-        //若登录之前无页面，则登录后进入首页
-        return '/'
-      }
+      let _url = this.$route.query.Rurl //  获取路由前置守卫中 next 函数的参数，即登录后要去的页面
+      return _url ? _url : '/'  //  若登录之前有页面，则登录后仍然进入该页面
     }
   },
   watch: {
-    //  已验证通过时，若重新输入手机号、用户名或密码，滑动解锁恢复原样
+    //  滑动解锁验证通过时，若重新输入手机号、用户名或密码，滑动解锁恢复原样
     'registerForm.telephone'() {
       this.isPassing = false
       this.$refs.dragVerifyRef.reset()
     },
-    'registerForm.userName'() {
+    'registerForm.username'() {
       this.isPassing = false
       this.$refs.dragVerifyRef.reset()
     },
@@ -120,13 +112,17 @@ export default {
     }
   },
   created() {
+    //  绘制背景图
     this.$nextTick(() => {
       let element = document.getElementById('registerBackground')
       new CanvasNest(element, config)
     })
   },
   methods: {
-    //  滑动解锁完成
+    /**
+     * 滑动解锁完成 回调函数
+     * @param {boolean} isPassing 解锁是否通过
+     */
     updateIsPassing(isPassing) {
       if (isPassing) {
         //  校验手机号
@@ -141,28 +137,25 @@ export default {
         this.submitDisabled = true
       }
     },
-    //  注册按钮
+    /**
+     * 注册按钮点击事件 表单验证&用户注册
+     * @param {boolean} formName 表单ref值
+     */
     submitForm(formName) {
       this.$refs[formName].validate((valid) => {
         if (valid) {
-          //  各项校验通过
-          let info = {
-            telephone: this.registerForm.telephone,
-            username: this.registerForm.userName,
-            password: this.registerForm.password
-          }
-          addUser(info).then((res) => {
-            if (res.success == false) {
-              this.$message.error(res.errorMessage)
-            } else {
-              //	这里的返回字段需要和后台重新商议
+          // 表单各项校验通过
+          addUser(this.registerForm).then((res) => {
+            if (res.success) {
               this.$notify({
                 title: '成功',
                 message: '注册成功！已跳转到登录页面',
                 type: 'success'
               })
-              this.$router.replace({ path: '/login' })
               this.$refs[formName].resetFields()
+              this.$router.replace({ path: '/login' })
+            } else {
+              this.$message.error(res.message)
             }
           })
         } else {
@@ -176,11 +169,12 @@ export default {
 </script>
 <style lang="stylus" scoped>
 .register-wrapper {
-  height: calc(100vh - 189px) !important;
-  min-height: 500px !important;
+  // height: 500px !important;
+  min-height: calc(100vh - 189px) !important;
+  width: 100% !important;
   padding-top: 50px;
 
-  .register-form-wrapper {
+  .form-wrapper {
     width: 375px;
     margin: 0 auto;
     text-align: center;
@@ -209,8 +203,8 @@ export default {
         font-size: 16px;
       }
 
-      .register-btn-form-item {
-        .register-btn {
+      .registerButtonWrapper {
+        .registerButton {
           width: 100%;
         }
 

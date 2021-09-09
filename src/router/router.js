@@ -29,7 +29,6 @@ export default new Router({
       name: 'Stock',
       component: () => import(/* webpackChunkName: "stock_list" */ '@/views/Stock/StockList.vue'),
       meta: {
-        requireAuth: true,
         title: '奇文股票',
         content: {
           description:

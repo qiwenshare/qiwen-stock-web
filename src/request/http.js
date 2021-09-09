@@ -1,7 +1,7 @@
 import axios from 'axios'
 import globalFunction from '@/globalFunction.js'
 import router from '@/router/router'
-import { MessageBox } from 'element-ui';
+import { MessageBox, Message } from 'element-ui';
 
 // 登录提醒
 const loginTip = function() {
@@ -52,8 +52,17 @@ axios.interceptors.response.use(
     if (error.response.status) {
       console.log(error.response)
       switch(error.response.status) {
+        case 404:
+          Message.warning('接口不存在，请刷新重试或联系管理员')
+          break
         case 401:
           loginTip()
+          break
+        case 500:
+          Message.error('服务异常，请稍后刷新重试或联系管理员')
+          break
+        case 502:
+          Message.error('服务异常，请稍后刷新重试或联系管理员')
           break
         default:
           return Promise.reject(error.response)

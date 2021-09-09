@@ -17,6 +17,8 @@ router.beforeEach((to, from, next) => {
     })
   } else {
     next() // 正常跳转到你设置好的页面
+    // 调用获取用户登录状态和信息的接口，以便显示顶部导航栏的用户登录信息
+		store.dispatch('getUserInfo')
   }
   // 路由发生变化修改页面title
   if (to.meta.title) {

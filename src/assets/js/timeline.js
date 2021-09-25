@@ -93,11 +93,11 @@ function get_m_data(data, type) {
     for (var i = 0; i < data.length; i++) {
         var v =  data[i];
         if (i == 0) {
-            tempPrePrice = v.price / (v.updownrange + 1);
+            tempPrePrice = v.price / (v.upDownRange + 1);
         }
-        updownrangeArr.push(v.updownrange);
+        updownrangeArr.push(v.upDownRange);
         priceArr.push(v.price);
-        avgPrice.push(v.avgprice);
+        avgPrice.push(v.avgPrice);
         vol.push(v.volume);
 
     }

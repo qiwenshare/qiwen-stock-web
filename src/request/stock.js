@@ -22,6 +22,8 @@ export const getShStock = p => get('/stock/getshstock', p);
 export const backTest = p => post('/stock/backtest', p)
 export const selectReplayList = p => get('/stock/selectreplaylist', p)
 
+export const getStockBid = p => get('/stock/getstockbid', p)
+
 
 
 

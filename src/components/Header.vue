@@ -6,6 +6,24 @@
       <el-menu-item index="Stock" :route="{ name: 'Stock' }">股票</el-menu-item>
       <!-- <div class="el-menu-item"><a href="https://www.qiwenshare.com/topic/detail/6/24" target="_blank">帮助文档</a></div> -->
       <!-- 为了和其他菜单样式保持一致，请一定要添加类名 el-menu-item -->
+      
+      <el-select
+        v-model="value"
+        class="search-input"
+        filterable
+        remote
+        reserve-keyword
+        placeholder="查询股票"
+        :remote-method="queryStockByFilter"
+        @change="inputChange"
+      >
+        <el-option
+          v-for="item in stockList"
+          :key="item.stockNum"
+          :label="item.stockName"
+          :value="item.stockNum"
+        ></el-option>
+      </el-select>
       <div class="el-menu-item exit" @click="exitButton()" v-show="isLogin">
         退出
       </div>
@@ -25,12 +43,18 @@
 
 <script>
 import { mapGetters } from 'vuex'
+import {
+  getStockList
+} from "@/request/stock.js";
 
 export default {
   name: 'Header',
   data() {
     return {
-      logoUrl: require('@/assets/images/common/logo_header.png')
+      logoUrl: require('@/assets/images/common/logo_header.png'),
+      stockList : [],
+      stockNum : "",
+      value: [],
     }
   },
   computed: {
@@ -43,6 +67,9 @@ export default {
       return process.env.NODE_ENV !== 'development' && location.origin === 'https://pan.qiwenshare.com'
     }
   },
+  mounted(){
+    this.queryStockByFilter("");
+  },
   methods: {
     /**
      * 退出登录
@@ -54,7 +81,27 @@ export default {
         this.removeCookies('token')
         this.$router.push({ path: '/login' })
       })
-    }
+    },
+    inputChange(stockNum) {
+      window.location.href = "/stock/detail/" + stockNum;
+      // this.$router.push({
+      //   path: "/stock/detail/" + stockNum,
+      // });
+      
+    },
+    queryStockByFilter(query) {
+      var data1 = {};
+      data1.key = query; // "sh000001";
+      data1.currentPage = 0;
+      data1.pageCount = 0;
+      getStockList(data1).then((res) => {
+        if (res.success) {
+          this.stockList = res.data.list;
+        } else {
+          this.$message.error(res.message);
+        }
+      });
+    },
   }
 }
 </script>
@@ -106,6 +153,14 @@ export default {
 
     .login, .register, .username, .exit {
       float: right;
+    }
+
+    .search-input {
+      height: 60px !important;
+      line-height: 60px;
+      margin-left: 30px;
+      flex: 1;
+      max-width: 300px;
     }
   }
 }

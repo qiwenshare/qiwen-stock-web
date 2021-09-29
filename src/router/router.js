@@ -29,6 +29,7 @@ export default new Router({
       name: 'Stock',
       component: () => import(/* webpackChunkName: "stock_list" */ '@/views/Stock/StockList.vue'),
       meta: {
+        requireAuth: true,
         title: '奇文股票',
         content: {
           description:
@@ -37,7 +38,7 @@ export default new Router({
       }
     },
     {
-      path: '/stock/detail/:stocknum',
+      path: '/stock/detail/:stockNum',
       name: 'StockDetail',
       component: () => import(/* webpackChunkName: "stock_detail" */ '@/views/Stock/StockDetail.vue'),
       meta: { title: '股票详情 - 奇文股票' }
@@ -55,3 +56,4 @@ const originalPush = Router.prototype.push
 Router.prototype.push = function push(location) {
   return originalPush.call(this, location).catch((err) => err)
 }
+

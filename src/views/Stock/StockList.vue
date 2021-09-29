@@ -147,10 +147,10 @@
             tag="a"
             :to="{
               name: 'StockDetail',
-              params: { stocknum: scope.row.stocknum }
+              params: { stockNum: scope.row.stockNum }
             }"
             target="_blank"
-            >{{ scope.row.stocknum }}</router-link
+            >{{ scope.row.stockNum }}</router-link
           >
         </template>
       </el-table-column>
@@ -161,49 +161,49 @@
             tag="a"
             :to="{
               name: 'StockDetail',
-              params: { stocknum: scope.row.stocknum }
+              params: { stockNum: scope.row.stockNum }
             }"
             target="_blank"
-            >{{ scope.row.stockname }}</router-link
+            >{{ scope.row.stockName }}</router-link
           >
         </template>
       </el-table-column>
       <el-table-column label="最新价" width="90" align="center">
         <template slot-scope="scope">
-          <span class="stock-close" :class="scope.row.updownrange.includes('-') ? 'green' : 'red'">{{
+          <span class="stock-close" :class="scope.row.upDownRange.includes('-') ? 'green' : 'red'">{{
             scope.row.close
           }}</span>
         </template>
       </el-table-column>
       <el-table-column label="单日涨跌幅" width="94" align="center">
         <template slot-scope="scope">
-          <span class="stock-updownrange" :class="scope.row.updownrange.includes('-') ? 'green' : 'red'">{{
-            scope.row.updownrange
+          <span class="stock-upDownRange" :class="scope.row.upDownRange.includes('-') ? 'green' : 'red'">{{
+            scope.row.upDownRange
           }}</span>
         </template>
       </el-table-column>
       <el-table-column label="3日涨跌幅" width="94" align="center">
         <template slot-scope="scope">
-          <span class="stock-updownrange3" :class="scope.row.updownrange3.includes('-') ? 'green' : 'red'">{{
-            scope.row.updownrange3
+          <span class="stock-upDownRange3" :class="scope.row.upDownRange3.includes('-') ? 'green' : 'red'">{{
+            scope.row.upDownRange3
           }}</span>
         </template>
       </el-table-column>
       <el-table-column label="5日涨跌幅" width="94" align="center">
         <template slot-scope="scope">
-          <span class="stock-updownrange5" :class="scope.row.updownrange5.includes('-') ? 'green' : 'red'">{{
-            scope.row.updownrange5
+          <span class="stock-upDownRange5" :class="scope.row.upDownRange5.includes('-') ? 'green' : 'red'">{{
+            scope.row.upDownRange5
           }}</span>
         </template>
       </el-table-column>
       <el-table-column label="涨跌额" width="90" align="center">
         <template slot-scope="scope">
-          <span class="stock-updownprices" :class="scope.row.updownprices.includes('-') ? 'green' : 'red'">{{
-            scope.row.updownprices
+          <span class="stock-upDownPrices" :class="scope.row.upDownPrices.includes('-') ? 'green' : 'red'">{{
+            scope.row.upDownPrices
           }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="换手率" prop="turnoverrate" width="90" align="center"> </el-table-column>
+      <el-table-column label="换手率" prop="turnOverrate" width="90" align="center"> </el-table-column>
       <el-table-column label="振幅" prop="amplitude" width="90" align="center"></el-table-column>
       <el-table-column label="上市日期" prop="lISTING_DATE" width="120" align="center"></el-table-column>
       <el-table-column label="流通股本" prop="totalFlowShares" align="center"></el-table-column>
@@ -211,8 +211,8 @@
     </el-table>
     <el-pagination
       class="stock-pagination"
-      :current-page="pageData.page"
-      :page-size="pageData.limit"
+      :current-page="pageData.currentPage"
+      :page-size="pageData.pageCount"
       :total="pageData.total"
       :page-sizes="[10, 20, 50, 100]"
       layout="sizes, total, prev, pager, next"
@@ -243,8 +243,8 @@ export default {
       stockTableData: [],
       // 分页组件数据
       pageData: {
-        page: 1, //  页码
-        limit: 20, //  页大小
+        currentPage: 1, //  页码
+        pageCount: 20, //  页大小
         total: 0
       },
       loading: false,
@@ -354,25 +354,25 @@ export default {
     getStockTableData() {
       this.loading = true
       getStockList({
-        page: this.pageData.page,
-        limit: this.pageData.limit
+        currentPage: this.pageData.currentPage,
+        pageCount: this.pageData.pageCount
       }).then((res) => {
         this.loading = false
         if (res.success) {
-          this.stockTableData = res.data.map((item) => {
+          this.stockTableData = res.data.list.map((item) => {
             return {
               ...item,
-              updownrange: this.doubleToPercent(item.updownrange),
-              updownrange3: this.doubleToPercent(item.updownrange3),
-              updownrange5: this.doubleToPercent(item.updownrange5),
-              updownprices: item.updownprices.toFixed(2),
-              turnoverrate: this.doubleToPercent(item.turnoverrate),
+              upDownRange: this.doubleToPercent(item.upDownRange),
+              upDownRange3: this.doubleToPercent(item.upDownRange3),
+              upDownRange5: this.doubleToPercent(item.upDownRange5),
+              upDownPrices: item.upDownPrices.toFixed(2),
+              turnOverrate: this.doubleToPercent(item.turnOverrate),
               amplitude: this.doubleToPercent(item.amplitude),
               totalFlowShares: parseInt(item.totalFlowShares),
               totalShares: parseInt(item.totalShares)
             }
           })
-          this.pageData.total = res.count
+          this.pageData.total = res.data.total
         } else {
           this.$message.error(res.message)
         }
@@ -390,15 +390,15 @@ export default {
     /**
      * 表格数据获取相关事件 | 分页组件 | 当前页码改变
      */
-    handleCurrentChange(page) {
-      this.pageData.page = page
+    handleCurrentChange(currentPage) {
+      this.pageData.currentPage = currentPage
       this.getStockTableData()
     },
     /**
      * 表格数据获取相关事件 | 分页组件 | 页大小改变时
      */
-    handleSizeChange(limit) {
-      this.pageData.limit = limit
+    handleSizeChange(pageCount) {
+      this.pageData.pageCount = pageCount
       this.getStockTableData()
     },
     updateStockList() {

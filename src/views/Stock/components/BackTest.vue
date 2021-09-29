@@ -14,7 +14,7 @@
             <span style="margin-left: 10px">{{ scope.row.bought }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="买操作" width="200">
+        <el-table-column label="卖操作" width="200">
           <template slot-scope="scope">
             <span style="margin-left: 10px">{{ scope.row.sold }}</span>
           </template>
@@ -51,11 +51,13 @@ export default {
     this.selectReplayList()
   },
   props: {
-    stockInfo: { type: Object }
+    stockNum: { type: String }
   },
   methods: {
     backTest() {
-       backTest(this.stockInfo).then(res => {
+      let param = {};
+      param.stockNum = this.stockNum;
+       backTest(param).then(res => {
         if(res.success) {
           alert('成功')
           this.selectReplayList()
@@ -65,7 +67,9 @@ export default {
       })
     },
     selectReplayList(){
-      selectReplayList(this.stockInfo).then(res=>{
+      let param = {};
+      param.stockNum = this.stockNum;
+      selectReplayList(param).then(res=>{
         if(res.success) {
           this.replayData = res.data
           var successcount = 0;

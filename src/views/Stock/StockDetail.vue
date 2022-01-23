@@ -8,64 +8,11 @@
           >
           <i :class="upDownPrices >= 0 ? 'el-icon-top' : 'el-icon-bottom'" style="margin-left: 12px;"></i>
 
-          <span id="upDown">{{(upDownPrices * 1).toFixed(2)}}({{ (upDownRange * 100).toFixed(2) }}%)</span>
+          <span id="upDown">{{(upDownPrices * 1).toFixed(2)}}({{ (upDownRange * 1).toFixed(2) }}%)</span>
         </li>
        
       </ul>
       <table style="width: 100%; font-size: 16px;line-height: 30px;">
-        <!-- <tr>
-          <td colspan="2" class="stockName">{{ stockName }}({{ stockNum }})</td>
-          <td colspan="2">
-            <div class="search rel" id="stockSearchId">
-              <template>
-                <el-select
-                  filterable
-                  remote
-                  reserve-keyword
-                  placeholder="查询股票"
-                  :remote-method="queryStockByFilter"
-                  @change="inputChange"
-                >
-                  <el-option
-                    v-for="item in stockList"
-                    :key="item.stockNum"
-                    :label="item.stockName"
-                    :value="item.stockNum"
-                  ></el-option>
-                </el-select>
-              </template>
-            </div>
-           
-          </td>
-        </tr> -->
-        <!-- <tr>
-          <td
-            v-if="upDownPrices >= 0"
-            style="font-size: 54px; height: 70px; color: red"
-          >
-            {{ close }}
-            <i class="layui-icon layui-icon-triangle-d"></i>
-          </td>
-          <td
-            v-if="upDownPrices < 0"
-            style="font-size: 54px; height: 70px; color: green"
-          >
-            {{ close }}
-            <i class="layui-icon layui-icon-triangle-d"></i>
-          </td>
-          <td v-if="upDownPrices >= 0" style="color: red">
-            {{ (upDownPrices * 1).toFixed(2) }}
-          </td>
-          <td v-if="upDownPrices < 0" style="color: green">
-            {{ (upDownPrices * 1).toFixed(2) }}
-          </td>
-          <td v-if="upDownPrices >= 0" style="color: red">
-            {{ (upDownRange * 100).toFixed(2) }}%
-          </td>
-          <td v-if="upDownPrices < 0" style="color: green">
-            {{ (upDownRange * 100).toFixed(2) }}%
-          </td>
-        </tr> -->
         <tr>
           <td>{{ amount }}</td>
           <td>{{ amplitude }}</td>
@@ -195,7 +142,7 @@
                     <tr>
                       <td style="text-align: left">买5</td>
                       <td class="red" style="text-align: right">
-                        {{ boughPrice5 }}
+                        {{ boughtPrice5 }}
                       </td>
                       <td style="text-align: right">
                         {{ boughtCount5 }}
@@ -486,17 +433,17 @@ export default {
         _this.boughtPrice2 = rawData.boughtPrice2;
         _this.boughtPrice3 = rawData.boughtPrice3;
         _this.boughtPrice4 = rawData.boughtPrice4;
-        _this.boughPrice5 = rawData.boughPrice5;
-        _this.sellCount5 = (rawData.sellCount5 / 100).toFixed(0);
-        _this.sellCount4 = (rawData.sellCount4 / 100).toFixed(0);
-        _this.sellCount3 = (rawData.sellCount3 / 100).toFixed(0);
-        _this.sellCount2 = (rawData.sellCount2 / 100).toFixed(0);
-        _this.sellCount1 = (rawData.sellCount1 / 100).toFixed(0);
-        _this.boughtCount1 = (rawData.boughtCount1 / 100).toFixed(0);
-        _this.boughtCount2 = (rawData.boughtCount2 / 100).toFixed(0);
-        _this.boughtCount3 = (rawData.boughtCount3 / 100).toFixed(0);
-        _this.boughtCount4 = (rawData.boughtCount4 / 100).toFixed(0);
-        _this.boughtCount5 = (rawData.boughtCount5 / 100).toFixed(0);
+        _this.boughtPrice5 = rawData.boughtPrice5; 
+        _this.sellCount5 = rawData.sellCount5;
+        _this.sellCount4 = rawData.sellCount4;
+        _this.sellCount3 = rawData.sellCount3;
+        _this.sellCount2 = rawData.sellCount2;
+        _this.sellCount1 = rawData.sellCount1;
+        _this.boughtCount1 = rawData.boughtCount1;
+        _this.boughtCount2 = rawData.boughtCount2;
+        _this.boughtCount3 = rawData.boughtCount3;
+        _this.boughtCount4 = rawData.boughtCount4;
+        _this.boughtCount5 = rawData.boughtCount5;
         var totalBought =
           rawData.boughtCount1 +
           rawData.boughtCount2 +

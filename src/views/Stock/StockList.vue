@@ -33,6 +33,8 @@
           <el-button round size="mini" @click="updateStockList()" type="primary" style="margin-left: 16px"
             >更新股票列表</el-button
           >
+          <div>{{ stockListProgressTaskInfo }}</div>
+          <el-progress :text-inside="true" :percentage="percentageStockListProgressData"></el-progress>
 
           <el-divider>
             <div style="display: flex">
@@ -43,7 +45,7 @@
                 @click="updateStockTimeInfo()"
                 type="primary"
                 style="margin-left: 16px"
-                >更新分时线</el-button
+                >更新股票详情数据</el-button
               >
               <el-button
                 icon="el-icon-refresh"
@@ -56,83 +58,8 @@
               >
             </div>
           </el-divider>
-          <div>{{ timeTaskInfo }}</div>
-          <el-progress :text-inside="true" :percentage="percentageTimeData"></el-progress>
-
-          <el-divider>
-            <div style="display: flex">
-              <el-button
-                icon="el-icon-refresh"
-                round
-                size="mini"
-                @click="updateStockDayInfo()"
-                type="primary"
-                style="margin-left: 16px"
-                >更新日线</el-button
-              >
-              <el-button
-                icon="el-icon-refresh"
-                round
-                size="mini"
-                @click="stopUpdateTaskByType(2)"
-                type="danger"
-                style="margin-left: 16px"
-                >停止更新</el-button
-              >
-            </div>
-          </el-divider>
-          <div>{{ dayTaskInfo }}</div>
-          <el-progress :text-inside="true" :percentage="percentageDayData"></el-progress>
-
-          <el-divider>
-            <div style="display: flex">
-              <el-button
-                icon="el-icon-refresh"
-                round
-                size="mini"
-                @click="updateStockWeekInfo()"
-                type="primary"
-                style="margin-left: 16px"
-                >更新周线</el-button
-              >
-              <el-button
-                icon="el-icon-refresh"
-                round
-                size="mini"
-                @click="stopUpdateTaskByType(3)"
-                type="danger"
-                style="margin-left: 16px"
-                >停止更新</el-button
-              >
-            </div>
-          </el-divider>
-          <div>{{ weekTaskInfo }}</div>
-          <el-progress :text-inside="true" :percentage="percentageWeekData"></el-progress>
-
-          <el-divider>
-            <div style="display: flex">
-              <el-button
-                icon="el-icon-refresh"
-                round
-                size="mini"
-                @click="updateStockMonthInfo()"
-                type="primary"
-                style="margin-left: 16px"
-                >更新月线</el-button
-              >
-              <el-button
-                icon="el-icon-refresh"
-                round
-                size="mini"
-                @click="stopUpdateTaskByType(4)"
-                type="danger"
-                style="margin-left: 16px"
-                >停止更新</el-button
-              >
-            </div>
-          </el-divider>
-          <div>{{ monthTaskInfo }}</div>
-          <el-progress :text-inside="true" :percentage="percentageMonthData"></el-progress>
+          <div>{{ stockDetailProgressTaskInfo }}</div>
+          <el-progress :text-inside="true" :percentage="percentageStockDetailProgressData"></el-progress>
         </div>
         <span slot="footer" class="dialog-footer">
           <el-button @click="operateDialogStatus = false">关闭</el-button>
@@ -205,7 +132,7 @@
       </el-table-column>
       <el-table-column label="换手率" prop="turnOverrate" width="90" align="center"> </el-table-column>
       <el-table-column label="振幅" prop="amplitude" width="90" align="center"></el-table-column>
-      <el-table-column label="上市日期" prop="lISTING_DATE" width="120" align="center"></el-table-column>
+      <el-table-column label="上市日期" prop="listingDate" width="120" align="center"></el-table-column>
       <el-table-column label="流通股本" prop="totalFlowShares" align="center"></el-table-column>
       <el-table-column label="总股本" prop="totalShares" align="center"></el-table-column>
     </el-table>
@@ -228,8 +155,6 @@ import {
   updateStockList,
   updateStockDayInfo,
   updateStockTimeInfo,
-  updateStockWeekInfo,
-  updateStockMonthInfo,
   stopUpdateTaskByType,
   getShStock
 } from '@/request/stock.js'
@@ -249,14 +174,10 @@ export default {
       },
       loading: false,
       operateDialogStatus: false,
-      percentageTimeData: 0,
-      percentageDayData: 0,
-      percentageWeekData: 0,
-      percentageMonthData: 0,
-      timeTaskInfo: '',
-      dayTaskInfo: '',
-      weekTaskInfo: '',
-      monthTaskInfo: ''
+      percentageStockListProgressData: 0,
+      percentageStockDetailProgressData: 0,
+      stockListProgressTaskInfo: '',
+      stockDetailProgressTaskInfo: ''
     }
   },
   created() {
@@ -295,36 +216,24 @@ export default {
 
       socket.onmessage = function(message) {
         var result = JSON.parse(message.data)
-        if (result.runTask == true) {
-          console.log(JSON.stringify(result))
-          var taskId = result.taskId
+        
+        var taskId = result.taskId
 
-          var totalCount = result.totalCount
-          var completeCount = result.completeCount
-          var taskInfo = result.taskInfo
-          var fenzi = (completeCount / totalCount) * 100
-          if (taskId == 0) {
-            _this.percentageTimeData = fenzi.toFixed(0)
-            _this.timeTaskInfo = taskInfo
-          }
-          if (taskId == 1) {
-            _this.percentageDayData = fenzi.toFixed(0)
-            _this.dayTaskInfo = taskInfo
-          }
-          if (taskId == 2) {
-            _this.percentageWeekData = fenzi.toFixed(0)
-            _this.weekTaskInfo = taskInfo
-          }
-          if (taskId == 3) {
-            _this.percentageMonthData = fenzi.toFixed(0)
-            _this.monthTaskInfo = taskInfo
-          }
-
-          console.log(this.percentageDayData)
-          // layui.element.progress('demo', (fenzi + "").substr(0, (fenzi + "").indexOf(".") + 3) + '%')
-          // $("#processInfo").text(result.taskInfo)
-          console.log('接受消息：' + result.runTask)
+        var totalCount = result.totalCount
+        var completeCount = result.completeCount
+        var taskInfo = result.taskInfo
+        var fenzi = (completeCount / totalCount) * 100
+        if (taskId == 0) {
+          _this.percentageStockListProgressData = fenzi.toFixed(0)
+          _this.stockListProgressTaskInfo = taskInfo
         }
+        if (taskId == 1) {
+          _this.percentageStockDetailProgressData = fenzi.toFixed(0)
+          _this.stockDetailProgressTaskInfo = taskInfo
+        }
+        
+        console.log('接受消息：' + result.runTask)
+        
       }
 
       /*
@@ -412,24 +321,6 @@ export default {
     },
     updateStockDayInfo() {
       updateStockDayInfo().then((res) => {
-        if (res.success) {
-          alert('成功')
-        } else {
-          this.$message.error(res.message)
-        }
-      })
-    },
-    updateStockWeekInfo() {
-      updateStockWeekInfo().then((res) => {
-        if (res.success) {
-          alert('成功')
-        } else {
-          this.$message.error(res.message)
-        }
-      })
-    },
-    updateStockMonthInfo() {
-      updateStockMonthInfo().then((res) => {
         if (res.success) {
           alert('成功')
         } else {

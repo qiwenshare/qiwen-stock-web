@@ -277,8 +277,8 @@ export default {
               upDownPrices: item.upDownPrices.toFixed(2),
               turnOverrate: this.doubleToPercent(item.turnOverrate),
               amplitude: this.doubleToPercent(item.amplitude),
-              totalFlowShares: parseInt(item.totalFlowShares),
-              totalShares: parseInt(item.totalShares)
+              totalFlowShares: this.formatNum(item.totalFlowShares),
+              totalShares: this.formatNum(item.totalShares)
             }
           })
           this.pageData.total = res.data.total
@@ -287,15 +287,7 @@ export default {
         }
       })
     },
-    /**
-     * 数值转换为百分比
-     * @param {number} count 数值
-     */
-    doubleToPercent(count) {
-      let resultCount = (count * 100).toFixed(2)
-      let resultStr = resultCount + '%'
-      return resultStr
-    },
+    
     /**
      * 表格数据获取相关事件 | 分页组件 | 当前页码改变
      */

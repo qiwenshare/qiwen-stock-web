@@ -8,7 +8,7 @@
           >
           <i :class="upDownPrices >= 0 ? 'el-icon-top' : 'el-icon-bottom'" style="margin-left: 12px;"></i>
 
-          <span id="upDown">{{(upDownPrices * 1).toFixed(2)}}({{ (upDownRange * 1).toFixed(2) }}%)</span>
+          <span id="upDown">{{(upDownPrices * 1).toFixed(2)}}({{ (upDownRange * 100).toFixed(2) }}%)</span>
         </li>
        
       </ul>
@@ -247,7 +247,7 @@ export default {
       boughtPrice2: "",
       boughtPrice3: "",
       boughtPrice4: "",
-      boughPrice5: "",
+      boughtPrice5: "",
       sellCount5: "",
       sellCount4: "",
       sellCount3: "",
@@ -404,18 +404,26 @@ export default {
           "换手率：" + (rawData.turnOverrate * 100).toFixed(2) + "%";
         _this.upDownPrices = rawData.upDownPrices;
         _this.upDownRange = rawData.upDownRange;
-        _this.volume = "成交量：" + rawData.volume;
+        _this.volume = "成交量：" + this.formatNum(rawData.volume) + "手";
         _this.totalMarketValue =
-          "总市值：" + (rawData.totalMarketValue / 100000000).toFixed(2) + "亿";
+          "总市值：" + this.formatNum(rawData.totalMarketValue)
         _this.flowMarketValue =
           "流通市值：" +
-          (rawData.flowMarketValue / 100000000).toFixed(2) +
-          "亿";
+          this.formatNum(rawData.flowMarketValue);
         _this.totalFlowShares =
           "流通股本：" +
-          (rawData.totalFlowShares / 100000000).toFixed(2) +
-          "亿";
+          this.formatNum(rawData.totalFlowShares);
       });
+    },
+    formatNum(num) { 
+      if (num > 100000000) {
+        return (num / 100000000).toFixed(2) + "亿"
+      } else if (num > 10000) {
+        return (num / 10000).toFixed(2) + "万"
+      } else {
+        return num
+      }
+      
     },
     getStockBid(stockNum) {
       let data = {
@@ -456,6 +464,10 @@ export default {
           rawData.sellCount3 +
           rawData.sellCount4 +
           rawData.sellCount5;
+          console.log(totalBought)
+          if (isNaN(totalSell)) {
+            totalSell = 0
+          }
         _this.comparison =
           "委比：" +
           (

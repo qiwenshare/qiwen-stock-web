@@ -29,6 +29,25 @@ const globalFunction = {
     }
   },
   /**
+   * 数值转换为百分比
+   * @param {number} count 数值
+   */
+  doubleToPercent(count) {
+    let resultCount = (count * 100).toFixed(2)
+    let resultStr = resultCount + '%'
+    return resultStr
+  },
+  formatNum(num) { 
+    if (num > 100000000) {
+      return (num / 100000000).toFixed(2) + "亿"
+    } else if (num > 10000) {
+      return (num / 10000).toFixed(2) + "万"
+    } else {
+      return num
+    }
+    
+  },
+  /**
    * 获取图片缩略图路径
    * @param {object} row 文件信息
    * @returns {string} 图片缩略图路径
